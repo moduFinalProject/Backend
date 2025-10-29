@@ -2,9 +2,6 @@
 ## 👥 팀원
 - 팀장:[김경환] - 백엔드
 - [박영서] - 백엔드
-- [임영후] - 프론트엔드
-- [허지은] - 프론트엔드
-- [윤여훈] - 프론트엔드
 
 ## 🛠 기술 스택
 ### Backend
@@ -16,5 +13,3 @@
 ### Frontend
 - React, TypeScript, vanilla-extract(CSS IN JS)
 - Figma(화면구현), zustand(상태관리), e2e(테스트)
-
-## 📁 프로젝트 구조
