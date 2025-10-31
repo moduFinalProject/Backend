@@ -1,0 +1,23 @@
+# FastAPI 핵심
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# 데이터베이스 (SQLite - 설치 오류 없음!)
+sqlalchemy==2.0.23
+alembic==1.12.1
+aiosqlite==0.19.0
+
+# 인증/보안
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+
+# 캐시 (선택사항)
+redis==5.0.1
+
+# 설정
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+
+# 유틸
+httpx==0.25.2
