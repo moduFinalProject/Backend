@@ -22,4 +22,5 @@ venv/
 # Alembic
 alembic/versions/*.pyc
 
+# Alembic (추가!)
 alembic.ini
