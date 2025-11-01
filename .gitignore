@@ -20,7 +20,5 @@ venv/
 .idea/
 
 # Alembic
-alembic/versions/*.pyc
+alembic/versions/*.pyc/alembic.ini
 
-# Alembic (추가!)
-alembic.ini
