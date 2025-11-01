@@ -22,4 +22,4 @@ venv/
 # Alembic
 alembic/versions/*.pyc
 
-alembic .ini
+alembic.ini
