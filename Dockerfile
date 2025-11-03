@@ -1,11 +1,15 @@
 # Dockerfile
-FROM python:3.11-slim
+FROM python:3.13
 
 WORKDIR /app
 
-# PostgreSQL 클라이언트 라이브러리 설치
+# 시스템 패키지 설치
 RUN apt-get update && apt-get install -y \
+    gcc \
     postgresql-client \
+    libpq-dev \
+    libjpeg-dev \
+    zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
