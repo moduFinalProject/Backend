@@ -8,6 +8,10 @@ class DevelopmentConfig(BaseConfig):
     openai_api_key: str = ''
     
     database_url: str = ''
+    db_password: str = ''
+    db_name: str = ''
+    db_user: str = ''
+    db_host: str = ''
     
     jwt_secret: str = ''
     
