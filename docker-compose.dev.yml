@@ -51,7 +51,7 @@ services:
       - db
       - redis
     env_file:
-      - .env.production
+      - .env
     restart: unless-stopped
     expose:
       - 8000
