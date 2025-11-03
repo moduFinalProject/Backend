@@ -26,6 +26,7 @@ services:
 
   db:
     image: postgres:15
+    container_name: db
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -38,12 +39,14 @@ services:
 
   redis:
     image: redis:7
+    container_name: redis
     restart: unless-stopped
     ports:
       - "6379:6379"
 
   backend:
     build: .
+    container_name: backend
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - .:/app
