@@ -16,18 +16,23 @@ class ProductionConfig(BaseConfig):
     jwt_secret: str = ''
     
     host: str = ''
-    port: int = ''
+    port: int = 0
     
     domain: str = ''
     email: str = ''
     
     redis_host: str = ''
-    redis_port: int = ''
+    redis_port: int = 0
     
     aws_access_key_id: str = ''
     aws_secret_access_key: str = ''
     aws_bucket_name: str = ''
     aws_endpoint_url: str = ''
+
+    db_pool_size: int = 20
+    db_max_overflow: int = 30
+    db_pool_timeout: int = 30
+    db_command_timeout: int = 60
     
     class Config:
         env_file = ".env.production"
