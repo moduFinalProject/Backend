@@ -34,11 +34,21 @@ class DevelopmentConfig(BaseConfig):
     db_pool_timeout: int = 30
     db_command_timeout: int = 60
     
-    description : str = '''
-    ## 🔧 개발 자료
-    - [ERD 다이어그램](https://www.erdcloud.com/d/KNgfev2afc4PpbBiW)
-    - [아키텍처 구조도](https://drive.google.com/file/d/1h4NaN3dCZtZamfisBrnLudJk-so3z94c/view?usp=sharing)
-    '''
+    description : str = """
+
+---
+
+## 개발 자료 (DEV ONLY)
+
+<div style="background: #f0f8ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+
+<a href="https://www.erdcloud.com/d/KNgfev2afc4PpbBiW" target="_blank" style="display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin: 5px;">ERD</a>
+
+<a href="https://drive.google.com/file/d/1h4NaN3dCZtZamfisBrnLudJk-so3z94c/view?usp=sharing" target="_blank" style="display: inline-block; padding: 10px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 5px; margin: 5px;">아키텍쳐 구조도</a>
+
+</div>
+"""
+
     
     class Config:
         env_file = ".env"
