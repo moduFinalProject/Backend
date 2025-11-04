@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title=settings.app_name,
+    description=settings.description if settings.debug else None,
     debug=settings.debug,
     docs_url="/docs" if settings.debug else None,
     redoc_url="/redoc" if settings.debug else None,

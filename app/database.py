@@ -1,13 +1,16 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from app.config.config import settings
+from app.config.settings import settings
 
-# SQLite 비동기 연결
+
 engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=True,
-    connect_args={"check_same_thread": False}  # SQLite용
+    echo=settings.debug,
+    pool_pre_ping = True,
+    pool_size = settings.db_pool_size,
+    max_overflow= settings.db_max_overflow,
+    pool_timeout = settings.db_pool_timeout
 )
 
 AsyncSessionLocal = sessionmaker(
