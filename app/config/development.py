@@ -2,7 +2,7 @@ from .base import BaseConfig
 
 class DevelopmentConfig(BaseConfig):
     
-    debug: bool = False
+    debug: bool = True
     environment: str = ''
     
     openai_api_key: str = ''
