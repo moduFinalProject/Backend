@@ -1,0 +1,45 @@
+code_id,detail_id,division,title
+1,1,user_type,일반회원
+1,2,user_type,기업회원
+1,3,user_type,관리자
+2,1,gender,남성
+2,2,gender,여성
+3,1,action_type,이력서 생성
+3,2,action_type,회원가입
+3,3,action_type,로그인
+3,4,action_type,로그아웃
+3,5,action_type,회원 탈퇴
+3,6,action_type,모의면접 진행
+3,7,action_type,가이드 생성
+3,8,action_type,이력서 피드백 생성
+4,1,resume_type,일반이력서
+4,2,resume_type,기업별첨삭이력서
+4,3,resume_type,일반첨삭이력서
+5,1,military,면제
+5,2,military,군필
+5,3,military,미필
+5,4,military,공익
+5,5,military,병역특례
+5,6,military,해당없음
+6,1,degree,고졸
+6,2,degree,전문학사
+6,3,degree,학사
+6,4,degree,석사
+6,5,degree,박사
+7,1,file_type,이미지
+7,2,file_type,PDF
+7,3,file_type,문서
+7,4,file_type,동영상
+7,5,file_type,기타
+8,1,feedback_division,필수
+8,2,feedback_division,권장
+8,3,feedback_division,제안
+9,1,interview_feedback,잘한점
+9,2,interview_feedback,개선필요
+9,3,interview_feedback,제안
+10,1,study_priority,필수 기술
+10,2,study_priority,중요 기술
+10,3,study_priority,추가 학습
+11,1,provider,Github
+11,2,provider,Google
+11,3,provider,Kakao
