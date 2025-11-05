@@ -1,23 +1,42 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.security import get_current_user
 from app.database import get_db
 from app.models import User
-from app.dependencies import user_id
-from sqlalchemy import select
+from app.schemas import UserResponse
 
+router = APIRouter(prefix="/users", tags=["users"])
 
-router = APIRouter()
-
-@router.get("/users/me")
-async def get_current_user_info(db: AsyncSession = Depends(get_db)):
-    # 비동기 쿼리
-    result = await db.execute(select(User).filter(User.id == user_id))
-    user = result.scalar_one_or_none()
-    return user
-
-
+@router.get("/me", response_model=UserResponse)
+def get_my_profile(
+    current_user: User = Depends(get_current_user)
+):
+    """현재 로그인한 사용자의 프로필 조회"""
     return current_user
 
+@router.put("/me")
+def update_my_profile(
+    name: str = None,
+    phone: str = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """프로필 수정"""
+    if name:
+        current_user.name = name
+    if phone:
+        current_user.phone = phone
+    
+    db.commit()
+    db.refresh(current_user)
+    return current_user
 
-    # 만약 ID만 필요하다면:
-    return current_user.id
+@router.delete("/me")
+def delete_my_account(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """회원 탈퇴"""
+    db.delete(current_user)
+    db.commit()
+    return {"message": "회원 탈퇴가 완료되었습니다"}
