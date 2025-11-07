@@ -22,7 +22,7 @@ async def auth_google(code: str, db: AsyncSession = Depends(get_db)):
                 settings.google_oauth_token_url,
                 data={
                     "code": code,
-                    "client_id": settings.google_client_id,
+                    "client_id": "62731178017-jjj8blkivn8agl7gi99981km5ro2jpbp.apps.googleusercontent.com",
                     "client_secret": settings.google_client_secret,
                     "redirect_url": f"{settings.front_end_domain}/frontend/googleCallback",
                     "grant_type": "authorization_code",
