@@ -19,7 +19,7 @@ async def auth_google(code: str, db: AsyncSession = Depends(get_db)):
     try:
         print(settings.google_client_id)
         print(settings.google_client_secret)
-        print(settings.fromt_end_domain)
+        print(settings.front_end_domain)
         async with httpx.AsyncClient() as client:
             token_response = await client.post(
                 settings.google_oauth_token_url,
