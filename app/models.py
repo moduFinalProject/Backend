@@ -12,12 +12,12 @@ class User(Base):
     unique_id = Column(VARCHAR(22),unique=True,nullable=False)
     email = Column(VARCHAR(100), unique=True, nullable=False)
     name = Column(VARCHAR(50), nullable=False)
-    address = Column(VARCHAR(100), nullable=False)
+    address = Column(VARCHAR(100))
     phone = Column(VARCHAR(20))
     birth_date = Column(Date, nullable=False)
     provider = Column(VARCHAR(50))
     provider_id = Column(VARCHAR(50))
-    user_type = Column(VARCHAR(10))
+    user_type = Column(VARCHAR(10), default='1')
     is_activate = Column(Boolean, default=True)
     deleted_at = Column(TIMESTAMP)
     created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
@@ -138,6 +138,7 @@ class JobPosting(Base):
     qualification = Column(VARCHAR(300), nullable=False)
     prefer = Column(VARCHAR(300), nullable=False)
     created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    memo = Column(VARCHAR(500))
 
     user = relationship("User", back_populates="job_postings")
 
@@ -510,4 +511,4 @@ class Code(Base):
     code_id = Column(Integer, primary_key=True)
     detail_id = Column(Integer, primary_key=True)
     division = Column(VARCHAR(50), nullable=False)
-    title = Column(VARCHAR(20), nullable=False)
+    code_detail = Column(VARCHAR(20), nullable=False)

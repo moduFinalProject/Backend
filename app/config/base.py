@@ -5,9 +5,12 @@ from typing import Optional
 class BaseConfig(BaseSettings):
     
     app_name: str = "gaechwi"
-    jwt_algorithum: str = ''
+    jwt_algorithm: str = ''
     access_token_expire_minutes: int = ""
     aws_region: str = ''
+    
+    google_oauth_token_url : str = 'https://oauth2.googleapis.com/token'
+    google_oauth_userinfo_url : str = "https://www.googleapis.com/oauth2/v2/userinfo"
  
     
     class Config:
