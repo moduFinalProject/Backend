@@ -1,8 +1,7 @@
-import datetime
 import re
 from typing import Annotated, List, Optional
 from pydantic import BaseModel, BeforeValidator, ConfigDict, EmailStr, Field, StringConstraints, field_validator
-from datetime import date
+from datetime import date, datetime
 
 # ===== 기존 유틸리티 함수들 =====
 def strip_string(a: str):
@@ -22,69 +21,6 @@ Username = Annotated[
 TrimmedStr = Annotated[str, BeforeValidator(strip_string)]
 Normalizedstr = Annotated[str, BeforeValidator(normalize_str)]
 
-
-# ===== 인증 관련 =====
-class Login(BaseModel):
-    email: EmailStr
-    password: str
-
-    @field_validator("password")
-    @classmethod
-    def validate_password(cls, password: str):
-        password = password.strip()
-        if not password:
-            raise ValueError("비밀 번호를 입력해 주세요")
-        return password
-
-
-class UserCreate(BaseModel):
-    username: Username
-    email: EmailStr
-    password: str
-    password_test: str
-    bio: Optional[str] = Field(default=None, max_length=500)
-
-    @field_validator("password")
-    @classmethod
-    def validate_password(cls, password: str):
-        if " " in password:
-            raise ValueError("공백은 포함할 수 없습니다.")
-        if len(password) < 8:
-            raise ValueError("비밀번호는 8자 이상이어야 합니다.")
-        if not any(c.isalpha() for c in password):
-            raise ValueError("영문을 포함해야 합니다.")
-        if not any(c.isdigit() for c in password):
-            raise ValueError("숫자를 포함해야 합니다.")
-        if not any(c in "!@#$%^&*" for c in password):
-            raise ValueError("특수문자를 포함해야 합니다.")
-        return password
-
-
-# ===== JWT 인증 관련 추가 =====
-class UserRegisterRequest(BaseModel):
-    email: EmailStr
-    password: str = Field(..., min_length=8)
-    name: str = Field(..., min_length=2, max_length=50)
-    phone: Optional[str] = None
-    user_type: str = Field(default="job_seeker")  # job_seeker or employer
-
-class UserLoginRequest(BaseModel):
-    email: EmailStr
-    password: str
-
-class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str
-    user: dict
-
-class UserResponse(BaseModel):
-    id: int
-    email: str
-    name: str
-    phone: Optional[str] = None
-    user_type: str
-    
-    model_config = ConfigDict(from_attributes=True)
 
 
 # ===== 채용공고 스키마 =====
@@ -106,7 +42,7 @@ class JobPostingCreate(BaseModel):
     
     tech_stack: Optional[str] = None
     job_category: Optional[str] = None
-    deadline: Optional[datetime.datetime] = None
+    deadline: Optional[datetime] = None
 
 
 class JobPostingUpdate(BaseModel):
@@ -214,7 +150,7 @@ class ActivityItem(BaseModel):
 
 
 # 이력서 생성 요청
-class ResumeCreate(BaseModel):
+class ResumeItem(BaseModel):
     profile_image: Optional[str] = None
     
     # 기본 정보
@@ -231,7 +167,7 @@ class ResumeCreate(BaseModel):
     
     # 학력
     educations: Optional[List[EducationItem]] = Field(default_factory=list)
-    
+
     # 프로젝트
     projects: Optional[List[ProjectItem]] = Field(default_factory=list)
     
@@ -241,7 +177,7 @@ class ResumeCreate(BaseModel):
     # 기술 스택
     skills: Optional[List[str]] = Field(default_factory=list)
     
-    # 자격증 및 어학
+    # 자격증
     certifications: Optional[List[CertificationItem]] = Field(default_factory=list)
     
     # 포트폴리오
@@ -313,31 +249,6 @@ class ResumeListResponse(BaseModel):
     id: int
     title: str
     name: str
-    is_default: bool
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
-    
-    model_config = ConfigDict(from_attributes=True)
-
-
-# ===== 지원 스키마 =====
-class ApplicationCreate(BaseModel):
-    job_posting_id: int
-    resume_id: int
-    cover_letter: Optional[str] = None
-
-
-class ApplicationResponse(BaseModel):
-    id: int
-    user_id: int
-    job_posting_id: int
-    resume_id: int
-    cover_letter: Optional[str] = None
-    status: str
-    ai_match_score: Optional[int] = None
-    ai_analysis: Optional[str] = None
-    applied_at: datetime.datetime
-    reviewed_at: Optional[datetime.datetime] = None
     created_at: datetime.datetime
     updated_at: datetime.datetime
     
