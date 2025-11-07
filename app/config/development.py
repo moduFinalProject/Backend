@@ -34,7 +34,7 @@ class DevelopmentConfig(BaseConfig):
     db_pool_timeout: int = 30
     db_command_timeout: int = 60
     
-    google_client_key: str = ''
+    google_client_id: str = ''
     google_client_secret: str = ''
     
     front_end_domain: str = ''
