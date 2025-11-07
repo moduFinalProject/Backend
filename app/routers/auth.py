@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config.settings import settings
+from app.database import get_db
 from app.login_logic import create_user, get_user_by_email, get_user_by_provider
 from app.security import create_access_token
 from app.user_schema import UserCreate, UserResponse
@@ -12,7 +13,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/google")
-async def auth_google(code: str, db: AsyncSession):
+async def auth_google(code: str, db: AsyncSession = Depends(get_db)):
     try:
         async with httpx.AsyncClient() as client:
             token_response = await client.post(
@@ -76,7 +77,7 @@ async def auth_google(code: str, db: AsyncSession):
 
 
 @router.post("/signup")
-async def signup(data: UserCreate, db: AsyncSession):
+async def signup(data: UserCreate, db: AsyncSession = Depends(get_db)):
     user = create_user(
         db=db,
         email=data.email,

@@ -6,7 +6,7 @@ import secrets
 import os
 from app.database import get_db
 from app.login_logic import get_user_by_id
-from config.settings import settings
+from app.config.settings import settings
 from sqlalchemy.ext.asyncio import AsyncSession
 
 SECRET_KEY=settings.jwt_secret
@@ -35,9 +35,6 @@ def verify_token(token:str):
 
 
 
-
-def generate_unique_user_id():
-    return secrets.token_urlsafe(16)
 
 
 

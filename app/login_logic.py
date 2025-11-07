@@ -1,9 +1,9 @@
+import secrets
 from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import date, datetime
 from app.models import Code, User
-from app.security import generate_unique_user_id
 from sqlalchemy.orm import aliased
 
 
@@ -89,6 +89,10 @@ async def get_user_by_provider(db: AsyncSession, provieder: str, provider_id: st
     user = user.first()
     
     return user
+
+
+def generate_unique_user_id():
+    return secrets.token_urlsafe(16)
 
 
 async def create_user(
