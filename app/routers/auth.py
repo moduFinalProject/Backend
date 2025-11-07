@@ -17,6 +17,9 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 async def auth_google(code: str, db: AsyncSession = Depends(get_db)):
     '''구글 간편 로그인, 추후에 디버깅 코드 삭제'''
     try:
+        print(settings.google_client_id)
+        print(settings.google_client_secret)
+        print(settings.fromt_end_domain)
         async with httpx.AsyncClient() as client:
             token_response = await client.post(
                 settings.google_oauth_token_url,
