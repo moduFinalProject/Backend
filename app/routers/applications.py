@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
+from app.routers import resumes
 from app.security import get_current_user
 from app.database import get_db
 from app.models import User, Application, JobPosting, Resume

@@ -1,95 +1,77 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from typing import List
-from app.security import get_current_user
+from pydantic import BaseModel, HttpUrl
+from typing import List, Optional
+from datetime import date, datetime
+from models import Experience, Activity, Education, Project, Qualification
+
+from app.routers.resumes import ResumeCreate, ResumeResponse, ResumeUpdate 
+from app.models import ResumeDB, ExperienceDB, ActivityDB, EducationDB, ProjectDB, QualificationDB, TechnologyStackDB 
 from app.database import get_db
-from app.models import User, Resume
-from app.schemas import ResumeCreate, ResumeResponse
 
-router = APIRouter(prefix="/resumes", tags=["resumes"])
+class ResumeCreate(BaseModel):
+    """이력서 생성 (POST 요청용)"""
+    # 1. 기본 정보 (필수)
+    name: str
+    email: str
+    phone_number: str
 
-@router.get("/", response_model=List[ResumeResponse])
-def get_my_resumes(
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """내 이력서 목록 조회"""
-    resumes = db.query(Resume).filter(Resume.user_id == current_user.id).all()
-    return resumes
+    # 2. 공고 URL (선택)
+    job_post_url: Optional[HttpUrl] = None
 
-@router.post("/", response_model=ResumeResponse)
-def create_resume(
-    resume_data: ResumeCreate,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """이력서 생성"""
-    new_resume = Resume(
-        user_id=current_user.id,
-        title=resume_data.title,
-        content=resume_data.content
-    )
-    db.add(new_resume)
-    db.commit()
-    db.refresh(new_resume)
-    return new_resume
+    # 3. 주요 섹션 (목록 형태로 정의, 기본값: 빈 리스트)
+    experiences: List[Experience] = [] # 경력 (Experience)
+    activities: List[Activity] = [] # 활동 (Activity)
+    educations: List[Education] = []
+    projects: List[Project] = []
+    qualifications: List[Qualification] = []
 
-@router.get("/{resume_id}", response_model=ResumeResponse)
-def get_resume(
-    resume_id: int,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """특정 이력서 조회"""
-    resume = db.query(Resume).filter(Resume.id == resume_id).first()
-    
-    if not resume:
-        raise HTTPException(status_code=404, detail="이력서를 찾을 수 없습니다")
-    
-    # 본인 확인
-    if resume.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="권한이 없습니다")
-    
-    return resume
+    # 4. 기술 스택 (필수 목록)
+    tech_stack_summary: List[str]
 
-@router.put("/{resume_id}", response_model=ResumeResponse)
-def update_resume(
-    resume_id: int,
-    resume_data: ResumeCreate,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """이력서 수정"""
-    resume = db.query(Resume).filter(Resume.id == resume_id).first()
-    
-    if not resume:
-        raise HTTPException(status_code=404, detail="이력서를 찾을 수 없습니다")
-    
-    if resume.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="권한이 없습니다")
-    
-    resume.title = resume_data.title
-    resume.content = resume_data.content
-    
-    db.commit()
-    db.refresh(resume)
-    return resume
 
-@router.delete("/{resume_id}")
-def delete_resume(
-    resume_id: int,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """이력서 삭제 (본인만 가능)"""
-    resume = db.query(Resume).filter(Resume.id == resume_id).first()
+class ResumeUpdate(BaseModel):
+    """이력서 수정 (PUT/PATCH 요청용)"""
+    # 모든 필드는 Optional로 설정하여 부분 업데이트를 허용
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
+
+    job_post_url: Optional[HttpUrl] = None
+
+    # 목록형 데이터는 보통 전체를 덮어쓰거나, 별도의 중첩 API로 관리 (여기서는 덮어쓰기로 가정)
+    experiences: Optional[List[Experience]] = None
+    activities: Optional[List[Activity]] = None
+    educations: Optional[List[Education]] = None
+    projects: Optional[List[Project]] = None
+    qualifications: Optional[List[Qualification]] = None
+
+    tech_stack_summary: Optional[List[str]] = None
+
+
+class ResumeResponse(BaseModel):
+    """이력서 응답 (GET 요청 및 생성 후 반환용)"""
     
-    if not resume:
-        raise HTTPException(status_code=404, detail="이력서를 찾을 수 없습니다")
+    resume_id: int 
+    created_at: datetime
+    updated_at: datetime
     
-    if resume.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="권한이 없습니다")
+    # ResumeCreate의 모든 필드 포함
+    name: str
+    email: str
+    phone_number: str
+    job_post_url: Optional[HttpUrl] = None
     
-    db.delete(resume)
-    db.commit()
-    return {"message": "삭제되었습니다"}
+    experiences: List[Experience]
+    activities: List[Activity]
+    educations: List[Education]
+    projects: List[Project]
+    qualifications: List[Qualification]
+    tech_stack_summary: List[str]
+    
+    # Pydantic V2 설정 (class Config 대신 model_config 사용)
+    model_config = {
+        # DB 객체에서 Pydantic 모델로 변환 허용 (ORM 모드 활성화)
+        "from_attributes": True,
+        # 필드명이 아닌 속성 이름(예: DB column 이름)으로 값 할당을 허용
+        "populate_by_name": True 
+    }
+
