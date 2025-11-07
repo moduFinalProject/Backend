@@ -1,3 +1,4 @@
+import traceback
 from fastapi import APIRouter, Depends, HTTPException, status
 import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,6 +15,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/google")
 async def auth_google(code: str, db: AsyncSession = Depends(get_db)):
+    '''구글 간편 로그인, 추후에 디버깅 코드 삭제'''
     try:
         async with httpx.AsyncClient() as client:
             token_response = await client.post(
@@ -46,10 +48,10 @@ async def auth_google(code: str, db: AsyncSession = Depends(get_db)):
 
             user_info = user_info_response.json()
 
-        user = get_user_by_provider(db, "google", user_info["id"])
+        user = await get_user_by_provider(db, "google", user_info["id"])
 
         if not user:
-            user = get_user_by_email(db, user_info["email"])
+            user = await get_user_by_email(db, user_info["email"])
 
             if not user:
                 return {
@@ -71,6 +73,8 @@ async def auth_google(code: str, db: AsyncSession = Depends(get_db)):
         }
 
     except Exception as e:
+        print(f"Error: {str(e)}")
+        print(traceback.format_exc())
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
