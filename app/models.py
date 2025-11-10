@@ -19,10 +19,10 @@ class User(Base):
     provider_id = Column(VARCHAR(50))
     user_type = Column(VARCHAR(10), default='1')
     is_activate = Column(Boolean, default=True)
-    deleted_at = Column(TIMESTAMP)
-    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
-    last_accessed = Column(TIMESTAMP)
+    deleted_at = Column(TIMESTAMP(timezone=True))
+    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    last_accessed = Column(TIMESTAMP(timezone=True))
     gender = Column(VARCHAR(10), nullable=False)
     is_sanctions = Column(Boolean, default=False)
 
@@ -89,9 +89,9 @@ class UserBlacklist(Base):
         Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False
     )
     reason = Column(VARCHAR(200))
-    blocked_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
-    block_period = Column(TIMESTAMP)
+    blocked_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    block_period = Column(TIMESTAMP(timezone=True))
 
     blocker = relationship(
         "User", foreign_keys=[blocked_by], back_populates="blocked_users"
@@ -117,8 +117,8 @@ class UserActivityLog(Base):
     action_type = Column(VARCHAR(50))
     description = Column(VARCHAR(200))
     ip_address = Column(VARCHAR(100))
-    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     user = relationship("User", back_populates="activity_logs")
 
@@ -137,7 +137,7 @@ class JobPosting(Base):
     content = Column(VARCHAR(300))
     qualification = Column(VARCHAR(300), nullable=False)
     prefer = Column(VARCHAR(300), nullable=False)
-    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
     memo = Column(VARCHAR(500))
     is_activate = Column(Boolean, default=True)
 
@@ -168,9 +168,9 @@ class Resume(Base):
     title = Column(VARCHAR(30), nullable=False)
     resume_type = Column(VARCHAR(10), nullable=False)
     is_active = Column(Boolean, default=True)
-    deleted_at = Column(TIMESTAMP)
-    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    deleted_at = Column(TIMESTAMP(timezone=True))
+    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
     name = Column(VARCHAR(50))
     email = Column(VARCHAR(50))
     address = Column(VARCHAR(50))
@@ -330,7 +330,7 @@ class File(Base):
     org_file_name = Column(VARCHAR(100), nullable=False)
     mod_file_name = Column(VARCHAR(100), nullable=False)
     file_rul = Column(VARCHAR(100), nullable=False)
-    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     user = relationship("User", back_populates="files")
     resume = relationship("Resume", back_populates="files")
@@ -354,7 +354,7 @@ class ResumeFeedback(Base):
     )
     parent_content = Column(Text, nullable=False)
     matching_rate = Column(Integer, nullable=False)
-    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     resume = relationship("Resume", back_populates="resume_feedbacks")
     user = relationship("User", back_populates="resume_feedbacks")
@@ -379,7 +379,7 @@ class FeedbackContent(Base):
     )
     feedback_devision = Column(VARCHAR(10), nullable=False)
     feedback_result = Column(Text, nullable=False)
-    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     resume_feedback = relationship("ResumeFeedback", back_populates="feedback_contents")
 
@@ -461,9 +461,9 @@ class StudyGuide(Base):
     title = Column(VARCHAR(20), nullable=False)
     description = Column(VARCHAR(200), nullable=False)
     is_activate = Column(Boolean, default=True)
-    deleted_at = Column(TIMESTAMP)
-    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    deleted_at = Column(TIMESTAMP(timezone=True))
+    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     user = relationship("User", back_populates="study_guides")
     job_posting = relationship("JobPosting", back_populates="study_guides")
