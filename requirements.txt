@@ -31,3 +31,5 @@ boto3==1.35.0
 
 # 이미지 처리
 pillow>=10.4.0
+
+email-validator   2.3.0
