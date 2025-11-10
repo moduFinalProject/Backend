@@ -514,6 +514,6 @@ class Code(Base):
     __tablename__ = "codes"
 
     code_id = Column(Integer, primary_key=True)
-    detail_id = Column(Integer, primary_key=True)
+    detail_id = Column(VARCHAR(10), primary_key=True)
     division = Column(VARCHAR(50), nullable=False)
     code_detail = Column(VARCHAR(20), nullable=False)
