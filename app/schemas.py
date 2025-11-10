@@ -53,6 +53,25 @@ class AuthCode(BaseModel):
     code : str
     
 
+class UserResponse(BaseModel):
+    uniqe_id : str
+    email : str
+    name: str
+    address: str
+    phone: Optional[str] = None
+    birthdate : date
+    gender : str
+    gender_detail : str
+    provider : Optional[str] = None
+    provider_id : Optional[str] = None
+    user_type: str
+    user_type_detail: str
+    is_sanction : bool
+    created_at : datetime
+    updated_at : datetime
+    last_accessed : datetime
+
+
 
 class UserInfo(BaseModel):
 

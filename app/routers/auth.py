@@ -7,7 +7,7 @@ from app.config.settings import settings
 from app.database import get_db
 from app.login_logic import create_user, get_user_by_email, get_user_by_provider
 from app.security import create_access_token
-from app.schemas import AuthCode, UserCreate, UserResponse
+from app.schemas import AuthCode, UserCreate
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
