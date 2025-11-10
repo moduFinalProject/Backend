@@ -86,7 +86,7 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
         # 1. 입력값 확인
         print(f"[DEBUG] 받은 code: {code.code[:20]}...")
         print(
-            f"[DEBUG] redirect_uri: {settings.front_end_domain}/frontend/googleCallback"
+            f"[DEBUG] redirect_uri: http://localhost:5173/frontend/googleCallback"
         )
 
         async with httpx.AsyncClient() as client:
@@ -95,7 +95,7 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
                 "code": code.code,
                 "client_id": settings.google_client_id,
                 "client_secret": settings.google_client_secret,
-                "redirect_uri": f"{settings.front_end_domain}/frontend/googleCallback",
+                "redirect_uri": "http://localhost:5173/frontend/googleCallback",
                 "grant_type": "authorization_code",
             }
             print(f"[DEBUG] 토큰 요청 payload: {token_data_payload}")
