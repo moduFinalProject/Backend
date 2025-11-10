@@ -4,7 +4,6 @@ from datetime import date, datetime
 
 
 class UserResponse(BaseModel):
-    uniqe_id : str
     email : str
     name: str
     address: str
@@ -35,3 +34,23 @@ class UserCreate(BaseModel):
     provider_id : Optional[str] = None
     phone : Optional[str] = None
     user_type : str = 1
+    
+
+
+
+class AuthCode(BaseModel):
+    code : str
+    
+
+
+class UserModel(BaseModel):
+
+    email : str
+    name: str
+    address: str
+    phone: Optional[str] = None
+    birthdate : date
+    gender : str
+    gender_detail : str
+    
+    model_config = ConfigDict(from_attributes=True)
