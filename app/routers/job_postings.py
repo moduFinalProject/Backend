@@ -77,5 +77,3 @@ async def delete_job_posting(db: AsyncSession, posting_id: int) -> bool:
     await db.commit()
 
     return result.rowcount > 0
-
-WWw
