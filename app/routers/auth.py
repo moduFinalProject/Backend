@@ -7,24 +7,21 @@ from app.config.settings import settings
 from app.database import get_db
 from app.login_logic import create_user, get_user_by_email, get_user_by_provider
 from app.security import create_access_token
-from app.user_schema import UserCreate, UserResponse
+from app.user_schema import AuthCode, UserCreate, UserModel, UserResponse
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/google")
-async def auth_google(code: str, db: AsyncSession = Depends(get_db)):
-    '''구글 간편 로그인, 추후에 디버깅 코드 삭제'''
+async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
+    '''구글 간편 로그인 엔드포인트'''
     try:
-        print(settings.google_client_id)
-        print(settings.google_client_secret)
-        print(settings.front_end_domain)
         async with httpx.AsyncClient() as client:
             token_response = await client.post(
                 settings.google_oauth_token_url,
                 data={
-                    "code": code,
+                    "code": code.code,
                     "client_id": settings.google_client_id,
                     "client_secret": settings.google_client_secret,
                     "redirect_uri": f"{settings.front_end_domain}/frontend/googleCallback",
@@ -59,19 +56,18 @@ async def auth_google(code: str, db: AsyncSession = Depends(get_db)):
             if not user:
                 return {
                     "is_new_user": True,
-                    "google_info": {
+                    "user": {
                         "provider": "google",
                         "provider_id": user_info["id"],
                         "email": user_info["email"],
                         "name": user_info["name"],
-                        "profile_image": user_info.get("picture"),
                     },
                 }
         jwt_token = create_access_token(data={"sub": user.unique_id})
         return {
             "access_token": jwt_token,
             "token_type": "bearer",
-            "user": UserResponse.from_orm(user),
+            "user": {"name": user.name, "email": user.email},
             "is_new_user": False,
         }
 
@@ -85,6 +81,7 @@ async def auth_google(code: str, db: AsyncSession = Depends(get_db)):
 
 @router.post("/signup")
 async def signup(data: UserCreate, db: AsyncSession = Depends(get_db)):
+    '''신규 사용자 로그인 엔드포인트'''
     user = create_user(
         db=db,
         email=data.email,
@@ -103,5 +100,5 @@ async def signup(data: UserCreate, db: AsyncSession = Depends(get_db)):
     return {
         "access_token": jwt_token,
         "token_type": "bearer",
-        "user": UserResponse.from_orm(user),
+        "user": {"name": user.name, "email": user.email},
     }
