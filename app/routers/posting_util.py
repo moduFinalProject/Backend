@@ -5,7 +5,7 @@ from typing import List
 
 from app.database import get_db # DB 세션 의존성 함수
 from app.schemas import JobPosting, JobPostingCreate, JobPostingUpdate # Pydantic 스키마
-from .. import posting_util as crud  # app/job_postings.py 파일 (CRUD 로직)
+from .. import job_postings as crud  # app/job_postings.py 파일 (CRUD 로직)
 
 router = APIRouter(prefix="/job-postings", tags=["Job Postings"])
 
