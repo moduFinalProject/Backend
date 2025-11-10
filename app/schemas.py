@@ -291,25 +291,46 @@ class ResumeListResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-
-class UserResponse(BaseModel):
-    email : str
-    name: str
-    address: str
-    phone: Optional[str] = None
-    birthdate : date
-    gender : str
-    gender_detail : str
-    provider : Optional[str] = None
-    provider_id : Optional[str] = None
-    user_type: str
-    user_type_detail: str
-    is_sanction : bool
-    created_at : datetime
-    updated_at : datetime
-    last_accessed : datetime
+# ===== pydantic 스키마 =====
+class JobPostingBase(BaseModel):
+    """채용 공고 생성 및 수정을 위한 공통 필드 (ERD 컬럼명 반영)"""
     
-    model_config = ConfigDict(from_attributes=True)
+    url: Optional[str] = Field(None, max_length=200, description="공고 URL")
+    title: str = Field(..., max_length=30, description="제목")
+    company: str = Field(..., max_length=30, description="회사명")
+    content: str = Field(..., max_length=300, description="내용 요약")
+    qualification: Optional[str] = Field(None, max_length=300, description="자격 요건")
+    prefer: Optional[str] = Field(None, max_length=300, description="우대 사항")
+    memo: Optional[str] = Field(None, max_length=500, description="메모")
+
+
+class JobPostingCreate(JobPostingBase):
+    pass
+
+
+class JobPostingUpdate(JobPostingBase):
+    """채용 공고 수정을 위한 스키마 (모든 필드는 선택 사항)"""
+    
+    url: Optional[str] = Field(None, max_length=200, description="공고 URL")
+    title: Optional[str] = Field(None, max_length=30, description="제목")
+    company: Optional[str] = Field(None, max_length=30, description="회사명")
+    content: Optional[str] = Field(None, max_length=300, description="내용 요약")
+    qualification: Optional[str] = Field(None, max_length=300, description="자격 요건")
+    prefer: Optional[str] = Field(None, max_length=300, description="우대 사항")
+    memo: Optional[str] = Field(None, max_length=500, description="메모")
+
+
+class JobPosting(JobPostingBase):
+    """클라이언트에게 반환할 최종 데이터 스키마 (응답 모델)"""
+    
+    posting_id: int = Field(..., description="채용 공고 고유 ID")
+    user_id: int = Field(..., description="공고를 작성한 사용자 ID (작성자)")
+    created_at: datetime = Field(..., description="생성 시간")
+    updated_at: datetime = Field(..., description="마지막 업데이트 시간")
+
+    class Config:
+        """SQLAlchemy ORM 모드 활성화"""
+        from_attributes = True
 
 
 
