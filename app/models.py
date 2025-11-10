@@ -139,6 +139,7 @@ class JobPosting(Base):
     prefer = Column(VARCHAR(300), nullable=False)
     created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
     memo = Column(VARCHAR(500))
+    is_activate = Column(Boolean, default=True)
 
     user = relationship("User", back_populates="job_postings")
 
@@ -170,8 +171,10 @@ class Resume(Base):
     deleted_at = Column(TIMESTAMP)
     created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
+    name = Column(VARCHAR(50))
     email = Column(VARCHAR(50))
     address = Column(VARCHAR(50))
+    gender = Column(VARCHAR(10), nullable=False)
     phone = Column(VARCHAR(50))
     military_service = Column(VARCHAR(10))
     birth_date = Column(Date)
@@ -226,6 +229,7 @@ class Project(Base):
     title = Column(VARCHAR(20), nullable=False)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date)
+    description = Column(VARCHAR(500))
 
     resume = relationship("Resume", back_populates="projects")
 
@@ -241,6 +245,7 @@ class Activity(Base):
     title = Column(VARCHAR(20), nullable=False)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date)
+    description = Column(VARCHAR(500))
 
     resume = relationship("Resume", back_populates="activities")
 

@@ -2,6 +2,16 @@ from fastapi import FastAPI
 from app.config.settings import settings
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth
+from app.routers import job_postings
+
+
+app = FastAPI(title="AI 구인구직 플랫폼")
+
+@app.get("/healthy")
+def health_check():
+    return {"hello": "world"}
+
+
 
 app = FastAPI(
     title=settings.app_name,
@@ -20,8 +30,3 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
-
-
-@app.get("/healthy")
-def health_check():
-    return {"hello": "world"}
