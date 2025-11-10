@@ -1,79 +1,84 @@
+from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
-from typing import Optional, List
+from typing import List
 
-from app.models import JobPosting as DBJobPosting
-from app.schemas import JobPostingCreate, JobPostingUpdate
 
-async def create_job_posting(
-    db: AsyncSession,
-    job_posting: JobPostingCreate,
-    user_id: int
-) -> DBJobPosting:
-    """새 채용 공고를 생성합니다. user_id는 인증 시스템에서 주입됩니다."""
+from app.database import get_db # DB 세션 의존성 함수
+from app.schemas import JobPosting, JobPostingCreate, JobPostingUpdate # Pydantic 스키마
+from .. import job_postings as crud  # app/job_postings.py 파일 (CRUD 로직)
 
-    db_job = DBJobPosting(
-        user_id=user_id,
-        **job_posting.model_dump(exclude_unset=True, exclude_none=True)
-    )
+router = APIRouter(prefix="/job-postings", tags=["Job Postings"])
 
-    db.add(db_job)
-    await db.commit()
-    await db.refresh(db_job)
-
+# ----------------------------------------------------------------------
+## 1. CREATE (POST /job-postings/)
+# ----------------------------------------------------------------------
+@router.post("/", response_model=JobPosting, status_code=status.HTTP_201_CREATED)
+async def create_job_posting_endpoint(
+    job_posting: JobPostingCreate, 
+    db: AsyncSession = Depends(get_db),
+    current_user_id: int = 1 
+):
+    """새 채용 공고를 생성하고 DB에 저장합니다."""
+  
+    db_job = await crud.create_job_posting(db=db, job_posting=job_posting, user_id=current_user_id)
     return db_job
 
-
-async def get_job_postings(db: AsyncSession) -> List[DBJobPosting]:
+# ----------------------------------------------------------------------
+## 2. READ ALL (GET /job-postings/)
+# ----------------------------------------------------------------------
+@router.get("/", response_model=List[JobPosting])
+async def read_all_job_postings_endpoint(
+    db: AsyncSession = Depends(get_db)
+):
     """모든 채용 공고 목록을 조회합니다."""
+  
+    job_postings = await crud.get_job_postings(db=db)
+    return job_postings
 
-    result = await db.execute(select(DBJobPosting))
-    return result.scalars().all()
+# ----------------------------------------------------------------------
+## 3. READ SINGLE (GET /job-postings/{posting_id})
+# ----------------------------------------------------------------------
+@router.get("/{posting_id}", response_model=JobPosting)
+async def read_job_posting_endpoint(
+    posting_id: int, 
+    db: AsyncSession = Depends(get_db)
+):
+    """특정 ID의 채용 공고를 조회합니다."""
 
+    db_job = await crud.get_job_posting(db=db, posting_id=posting_id)
+    if db_job is None:
+        raise HTTPException(status_code=404, detail=f"Job Posting with ID {posting_id} not found")
+    return db_job
 
-async def get_job_posting(
-    db: AsyncSession,
-    posting_id: int
-) -> Optional[DBJobPosting]:
-    """특정 채용 공고를 조회합니다."""
+# ----------------------------------------------------------------------
+## 4. UPDATE (PUT /job-postings/{posting_id})
+# ----------------------------------------------------------------------
+@router.put("/{posting_id}", response_model=JobPosting)
+async def update_job_posting_endpoint(
+    posting_id: int,
+    job_posting_update: JobPostingUpdate,
+    db: AsyncSession = Depends(get_db),
+):
+    """특정 ID의 채용 공고를 수정합니다."""
+
+    db_job = await crud.update_job_posting(db=db, posting_id=posting_id, job_posting_update=job_posting_update)
+    if db_job is None:
+        raise HTTPException(status_code=404, detail=f"Job Posting with ID {posting_id} not found")
+    return db_job
+
+# ----------------------------------------------------------------------
+## 5. DELETE (DELETE /job-postings/{posting_id})
+# ----------------------------------------------------------------------
+@router.delete("/{posting_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_job_posting_endpoint(
+    posting_id: int,
+    db: AsyncSession = Depends(get_db),
+):
+    """특정 ID의 채용 공고를 삭제합니다."""
+    # CRUD 함수 호출: delete_job_posting
+    success = await crud.delete_job_posting(db=db, posting_id=posting_id)
+    if not success:
+        raise HTTPException(status_code=404, detail=f"Job Posting with ID {posting_id} not found")
     
-    result = await db.execute(
-        select(DBJobPosting).where(DBJobPosting.posting_id == posting_id)
-    )
-    return result.scalar_one_or_none()
 
-
-
-
-async def update_job_posting(
-        db: AsyncSession,
-        posting_id: int,
-        job_posting_update: JobPostingUpdate
-) -> Optional[DBJobPosting]:
-    """특정 채용 공고를 수정합니다."""
-    update_data = job_posting_update.model_dump(exclude_unset=True)
-
-    if not update_data:
-        return await get_job_posting(db, posting_id)
-    
-    stmt = (
-        update(DBJobPosting)
-        .where(DBJobPosting.posting_id == posting_id)
-        .values(**update_data)
-        .execution_options(synchronize_session="fetch")
-    )
-    await db.execute(stmt)
-    await db.commit()
-
-    return await get_job_posting(db, posting_id)
-
-
-async def delete_job_posting(db: AsyncSession, posting_id: int) -> bool:
-    """특정 채용 공고를 삭제합니다."""
-
-    stmt = delete(DBJobPosting).where(DBJobPosting.posting_id == posting_id)
-
-    result = await db.execute(stmt)
-    await db.commit()
-
-    return result.rowcount > 0
+    return
