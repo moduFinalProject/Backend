@@ -1,13 +1,14 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, joinedload, contains_eager
-from app.models import Code, Resume
+from app.models import Code, Resume, File
 
 
 async def get_resume_response(db: AsyncSession, resume_id: int):
     ResumetypeCode = aliased(Code)
     GenderCode = aliased(Code)
     MilitaryServiceCode = aliased(Code)
+    ImageFile = aliased(File)
 
     stmt = (
         select(
@@ -15,6 +16,7 @@ async def get_resume_response(db: AsyncSession, resume_id: int):
             GenderCode.code_detail.label("gender_detail"),
             ResumetypeCode.code_detail.label("resume_type_detail"),
             MilitaryServiceCode.code_detail.label("military_service_detail"),
+            ImageFile.file_key.label("image_key"),
         )
         .outerjoin(
             GenderCode,
@@ -29,6 +31,12 @@ async def get_resume_response(db: AsyncSession, resume_id: int):
             MilitaryServiceCode,
             (MilitaryServiceCode.division == "military_service")
             & (MilitaryServiceCode.detail_id == Resume.military_service),
+        )
+        .outerjoin(
+            ImageFile,
+            (ImageFile.fileable_id == Resume.resume_id)
+            & (ImageFile.fileable_table == "resumes")
+            & (ImageFile.purpose == "resume_image"),
         )
         .outerjoin(Resume.experiences)
         .outerjoin(Resume.educations)
