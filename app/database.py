@@ -6,9 +6,11 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy.orm import sessionmaker, declarative_base
 from app.config.settings import settings
 
+async_url = f"postgresql+asyncpg://{settings.database_url}"
+
 # ==================== Async 엔진 (FastAPI 앱용) ====================
 async_engine = create_async_engine(
-    settings.database_url,  # postgresql+asyncpg://...
+    async_url,  # postgresql+asyncpg://...
     pool_size=settings.db_pool_size,
     max_overflow=settings.db_max_overflow,
     pool_timeout=settings.db_pool_timeout,
@@ -27,10 +29,7 @@ AsyncSessionLocal = async_sessionmaker(
 
 # ==================== Sync 엔진 (Alembic용) ====================
 # asyncpg를 psycopg2로 변경한 URL
-sync_database_url = settings.database_url.replace(
-    "postgresql+asyncpg://",
-    "postgresql://"
-)
+sync_database_url = f"postgresql+psycopg2://{settings.database_url}"
 
 sync_engine = create_engine(
     sync_database_url,
