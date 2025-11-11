@@ -13,7 +13,14 @@ class BaseConfig(BaseSettings):
     google_oauth_userinfo_url : str = "https://www.googleapis.com/oauth2/v2/userinfo"
     
     image_max_size : int = 5 * 1024 * 1024
- 
+    
+    temp_image : str = "temp_image"
+    image : str = "image"
+    temp_portfolio : str = "temp_portfolio"
+    portfolio : str = "portfolio"
+    
+    
+    url_expire_minute = 300
     
     class Config:
         env_file_encoding = "utf-8"
