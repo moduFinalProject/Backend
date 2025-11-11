@@ -20,7 +20,7 @@ class BaseConfig(BaseSettings):
     portfolio : str = "portfolio"
     
     
-    url_expire_minute = 300
+    url_expire_minute : int = 300
     
     class Config:
         env_file_encoding = "utf-8"
