@@ -329,7 +329,8 @@ class File(Base):
     fileable_table = Column(VARCHAR(30), nullable=False)
     org_file_name = Column(VARCHAR(100), nullable=False)
     mod_file_name = Column(VARCHAR(100), nullable=False)
-    file_rul = Column(VARCHAR(100), nullable=False)
+    file_key = Column(VARCHAR(100), nullable=False)
+    purpose = Column(VARCHAR(50),nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     user = relationship("User", back_populates="files")

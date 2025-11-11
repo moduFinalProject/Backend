@@ -22,3 +22,9 @@ venv/
 
 # Alembic
 alembic/versions/*.pyc/alembic.ini
+
+
+for_test.py
+
+.claude
+CLAUDE.md

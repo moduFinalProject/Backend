@@ -18,7 +18,7 @@ from app.models import *
 config = context.config
 
 config.set_main_option(
-    'sqlalchemy.url',settings.database_url
+    'sqlalchemy.url', f"postgresql+psycopg2://{settings.database_url}"
 )
 
 # Interpret the config file for Python logging.
