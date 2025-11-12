@@ -157,6 +157,17 @@ class QualificationCreate(BaseModel):
         return v
 
 
+class TechnologyStackCreate(BaseModel):
+    title: str = Field(min_length=1, max_length=20)
+
+    @field_validator('title')
+    @classmethod
+    def strip_strings(cls, v):
+        if isinstance(v, str):
+            return v.strip()
+        return v
+
+
 
 
 class ExperienceResponse(BaseModel):
@@ -211,11 +222,12 @@ class QualificationResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+
 class TechnologyStackResponse(BaseModel):
     title : str
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
 
 
 
@@ -231,7 +243,7 @@ class ResumeCreate(BaseModel):
     military_service : Optional[str] = Field(None, max_length=10)
     birth_date : Optional[date] = None
     self_introduction: Optional[str] = Field(default=None)
-    technology_stacks: Optional[List[str]] = Field(default_factory=list)
+    technology_stacks: Optional[List[TechnologyStackCreate]] = Field(default_factory=list)
 
 
     experiences: Optional[List[ExperienceCreate]] = Field(default_factory=list)
@@ -251,13 +263,13 @@ class ResumeUpdate(BaseModel):
     title: Optional[str] = Field(None, max_length=30)
     name: Optional[TrimmedStr] = Field(None, max_length=50)
     email: Optional[EmailStr] = Field(None, max_length=50)
-    gender : str
+    gender : Optional[str] = Field(None, max_length=10)
     address: Optional[str] = Field(None, max_length=50)
     phone: Optional[TrimmedStr] = Field(None, max_length=50)
     military_service : Optional[str] = Field(None, max_length=10)
     birth_date : Optional[date] = None
     self_introduction: Optional[str] = None
-    technology_stacks: Optional[List[str]] = Field(default_factory=list)
+    technology_stacks: Optional[List[TechnologyStackCreate]] = Field(default_factory=list)
 
 
     experiences: Optional[List[ExperienceCreate]] = Field(default_factory=list)
