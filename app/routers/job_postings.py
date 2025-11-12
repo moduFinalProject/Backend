@@ -4,8 +4,10 @@ from typing import List
 
 
 from app.database import get_db # DB 세션 의존성 함수
+from app.models import User
 from app.schemas import JobPosting, JobPostingCreate, JobPostingUpdate # Pydantic 스키마
-from .. import job_postings as crud  # app/job_postings.py 파일 (CRUD 로직)
+from app.security import get_current_user
+import posting_util as crud  # app/job_postings.py 파일 (CRUD 로직)
 
 router = APIRouter(prefix="/job-postings", tags=["Job Postings"])
 
@@ -16,11 +18,12 @@ router = APIRouter(prefix="/job-postings", tags=["Job Postings"])
 async def create_job_posting_endpoint(
     job_posting: JobPostingCreate, 
     db: AsyncSession = Depends(get_db),
-    current_user_id: int = 1 
+   
+    current_user: User = Depends(get_current_user)
 ):
     """새 채용 공고를 생성하고 DB에 저장합니다."""
-  
-    db_job = await crud.create_job_posting(db=db, job_posting=job_posting, user_id=current_user_id)
+   
+    db_job = await crud.create_job_posting(db=db, job_posting=job_posting, user_id=current_user.user_id)
     return db_job
 
 # ----------------------------------------------------------------------
@@ -28,10 +31,11 @@ async def create_job_posting_endpoint(
 # ----------------------------------------------------------------------
 @router.get("/", response_model=List[JobPosting])
 async def read_all_job_postings_endpoint(
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """모든 채용 공고 목록을 조회합니다."""
-  
+    # CRUD 함수 호출: get_job_postings
     job_postings = await crud.get_job_postings(db=db)
     return job_postings
 
@@ -44,7 +48,7 @@ async def read_job_posting_endpoint(
     db: AsyncSession = Depends(get_db)
 ):
     """특정 ID의 채용 공고를 조회합니다."""
-
+ 
     db_job = await crud.get_job_posting(db=db, posting_id=posting_id)
     if db_job is None:
         raise HTTPException(status_code=404, detail=f"Job Posting with ID {posting_id} not found")
@@ -58,6 +62,7 @@ async def update_job_posting_endpoint(
     posting_id: int,
     job_posting_update: JobPostingUpdate,
     db: AsyncSession = Depends(get_db),
+
 ):
     """특정 ID의 채용 공고를 수정합니다."""
 
@@ -80,5 +85,5 @@ async def delete_job_posting_endpoint(
     if not success:
         raise HTTPException(status_code=404, detail=f"Job Posting with ID {posting_id} not found")
     
-
+    
     return
