@@ -6,11 +6,8 @@ from app.database import get_db
 from app.models import User, JobPosting as DBJobPosting
 from app.schemas import JobPosting, JobPostingCreate, JobPostingUpdate
 from app.security import get_current_user
-<<<<<<< HEAD
-import posting_util as crud
-=======
 import app.posting_util as crud  # app/job_postings.py 파일 (CRUD 로직)
->>>>>>> f88e32e2fdcc05b267f8d34020cdf5b0f25cd3ac
+
 
 router = APIRouter(prefix="/job-postings", tags=["Job Postings"])
 
