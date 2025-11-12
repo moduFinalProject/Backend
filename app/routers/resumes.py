@@ -35,7 +35,7 @@ router = APIRouter(prefix="/resumes", tags=["resumes"])
 router = APIRouter(prefix="/resumes", tags=["Resumes"])
 
 
-@router.get("/{page}/{page_size}}", response_model=List[ResumeListResponse])
+@router.get("/", response_model=List[ResumeListResponse])
 async def get_all_resumes(
     page: int = 1,
     page_size: int = 6,

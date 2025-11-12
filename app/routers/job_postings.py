@@ -35,7 +35,7 @@ async def create_job_posting_endpoint(
         )
 
 
-@router.get("/{page}/{page_size}", response_model=List[JobPosting])
+@router.get("/", response_model=List[JobPosting])
 async def read_all_job_postings_endpoint(page : int= 1, page_size : int= 6,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
