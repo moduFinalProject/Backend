@@ -11,22 +11,24 @@ async def test_resume_creation():
 
     async with httpx.AsyncClient() as client:
         data = {
-            "resume_type": "1",
-            "title": "테스트 이력서",
-            "name": "홍길동",
-            "email": "test@example.com",
-            "gender": "1",
-            "address": "서울",
-            "phone": "01012345678",
-            "military_service": "1",
-            "birth_date": "1990-01-01",
-            "self_introduction": "안녕하세요",
-            "technology_stacks": [],
-            "experiences": [],
-            "educations": [],
-            "projects": [],
-            "activities": [],
-            "qualifications": []
+            "name":"김취업",
+            "birth_date":"2025-12-31",
+            "email":"email@email.com",
+            "phone":"010-1111-2222",
+            "gender":"2",
+            "military_service":"1",
+            "address":"서울시 강남구",
+            "title":"이력서",
+            "url":"",
+            "photoUrl":"",
+            "educations":[{"organ":"한국대학교","department":"컴퓨터공학과","degree_level":"3","score":"4.5점","start_date":"2025-01-01","end_date":"2025-10-01"}],
+            "self_introduction":"",
+            "experiences":[],
+            "projects":[],
+            "activities":[],
+            "technology_stacks":[],
+            "qualifications":[],
+            "resume_type":"1"
         }
 
         files = {
