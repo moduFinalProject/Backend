@@ -38,11 +38,11 @@ router = APIRouter(prefix="/resumes", tags=["Resumes"])
 @router.get("/", response_model=List[ResumeListResponse])
 async def get_all_resumes(
     db: AsyncSession = Depends(get_db),
-    current_user_id: str = Depends(get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     """현재 사용자의 모든 이력서 목록 조회"""
     result = await db.execute(
-        select(Resume).where(Resume.user_id == current_user_id)
+        select(Resume).where(Resume.user_id == current_user.user_id)
     )
     resumes = result.scalars().all()
     return resumes
@@ -52,23 +52,38 @@ async def get_all_resumes(
 async def get_resume(
     resume_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user_id: str = Depends(get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     """특정 이력서 상세 조회"""
-    result = await db.execute(
-        select(Resume).where(
-            Resume.resume_id == resume_id,
-            Resume.user_id == current_user_id
-        )
-    )
-    db_resume = result.scalar_one_or_none()
-    
-    if db_resume is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Resume with ID {resume_id} not found"
-        )
-    return db_resume
+
+    try:
+        resume = await db.get(Resume, resume_id)
+
+        if resume is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="존재하지 않는 이력서 입니다.",
+            )
+
+        if resume.user_id != current_user.user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="잘못된 접근입니다."
+            )
+        
+        result = get_resume_response(db=db, resume_id=resume_id)
+        
+        image_url = await generate_presigned_url(result.image_key)
+        
+        db_resume= ResumeResponse.model_validate(result).model_dump()
+
+        db_resume['image_url'] = image_url
+
+        return db_resume
+
+    except Exception as e:
+        print(f"error : {str(e)}")
+        await db.rollback()
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="이력서 수정에 실패했습니다.")
 
 
 
