@@ -19,7 +19,6 @@ code_id,detail_id,division,code_detail
 5,2,military,군필
 5,3,military,미필
 5,4,military,공익
-5,5,military,해당 없음
 5,5,military,병역특례
 5,6,military,해당없음
 6,1,degree,고졸
