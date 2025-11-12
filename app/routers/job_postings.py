@@ -7,7 +7,6 @@ from app.database import get_db
 from app.models import User, JobPosting as DBJobPosting
 from app.schemas import JobPosting, JobPostingCreate, JobPostingUpdate
 from app.security import get_current_user
-import posting_util as crud
 
 import app.posting_util as crud  # app/job_postings.py 파일 (CRUD 로직)
 
