@@ -26,68 +26,37 @@ async def get_user_by_id(db: AsyncSession, user_id: str):
             (UsertypeCode.division == "user_type")
             & (UsertypeCode.detail_id == User.user_type),
         )
-        .where(User.unique_id == user_id))
-    
+        .where(User.unique_id == user_id)
+    )
+
     user = await db.execute(stmt)
 
     user = user.first()
-    
+
     return user
 
 
 async def get_user_by_email(db: AsyncSession, email: str):
-    GenderCode = aliased(Code)
-    UsertypeCode = aliased(Code)
 
-    stmt = (
-        select(
-            User,
-            GenderCode.code_detail.label("gender_detail"),
-            UsertypeCode.code_detail.label("user_type_detail"),
-        )
-        .outerjoin(
-            GenderCode,
-            (GenderCode.division == "gender") & (GenderCode.detail_id == User.gender),
-        )
-        .outerjoin(
-            UsertypeCode,
-            (UsertypeCode.division == "user_type")
-            & (UsertypeCode.detail_id == User.user_type),
-        )
-        .where(User.email == email))
-    
+    stmt = select(User).where(User.email == email)
+
     user = await db.execute(stmt)
 
-    user = user.first()
-    
+    user = user.scalar_one_or_none()
+
     return user
 
 
 async def get_user_by_provider(db: AsyncSession, provieder: str, provider_id: str):
-    GenderCode = aliased(Code)
-    UsertypeCode = aliased(Code)
 
-    stmt = (
-        select(
-            User,
-            GenderCode.code_detail.label("gender_detail"),
-            UsertypeCode.code_detail.label("user_type_detail"),
-        )
-        .outerjoin(
-            GenderCode,
-            (GenderCode.division == "gender") & (GenderCode.detail_id == User.gender),
-        )
-        .outerjoin(
-            UsertypeCode,
-            (UsertypeCode.division == "user_type")
-            & (UsertypeCode.detail_id == User.user_type),
-        )
-        .where(User.provider == provieder, User.provider_id == provider_id))
-    
+    stmt = select(User).where(
+        User.provider == provieder, User.provider_id == provider_id
+    )
+
     user = await db.execute(stmt)
 
-    user = user.first()
-    
+    user = user.scalar_one_or_none()
+
     return user
 
 
@@ -129,10 +98,10 @@ async def create_user(
     return new_user
 
 
-def update_login(db: AsyncSession, user_id: str):
-    user = get_user_by_id(db, user_id)
+async def update_login(db: AsyncSession, user_id: str):
+    user = await get_user_by_id(db, user_id)
 
     if user:
         user.last_accessed = datetime.utcnow()
-        db.commit
+        await db.commit()
     return None

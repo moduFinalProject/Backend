@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, joinedload, contains_eager
 from app.models import Code, Resume, File
@@ -52,11 +52,11 @@ async def get_resume_response(db: AsyncSession, resume_id: int):
             contains_eager(Resume.technology_stacks),
             contains_eager(Resume.qualifications),
         )
-        .where(Resume.resume_id == resume_id)
+        .where(and_(Resume.resume_id == resume_id, Resume.is_active == True))
     )
 
     resume = await db.execute(stmt)
 
-    resume = resume.first()
+    resume = resume.unique().first()
 
     return resume

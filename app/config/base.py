@@ -14,9 +14,8 @@ class BaseConfig(BaseSettings):
     
     image_max_size : int = 5 * 1024 * 1024
     
-    temp_image : str = "temp_image"
+
     image : str = "image"
-    temp_portfolio : str = "temp_portfolio"
     portfolio : str = "portfolio"
     
     
