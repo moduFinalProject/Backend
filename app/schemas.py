@@ -286,6 +286,7 @@ class ResumeUpdate(BaseModel):
         return v
 
 class ResumeResponse(BaseModel):
+    resume_id : int
     title: str
     name: str
     email: str
