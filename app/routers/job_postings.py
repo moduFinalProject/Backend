@@ -60,17 +60,21 @@ async def read_job_posting_endpoint(
     """특정 ID의 채용 공고를 조회합니다."""
     try:
         db_job = await db.get(DBJobPosting, posting_id)
-        
+
         if db_job is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="존재하지 않는 공고입니다."
             )
+
         if db_job.user_id != current_user.user_id:
-            raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST , detail ="잘못된 접근입니다.")
-            
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="잘못된 접근입니다."
+            )
 
         return db_job
+
     except HTTPException:
         raise
     except Exception as e:
@@ -90,20 +94,21 @@ async def update_job_posting_endpoint(
     """특정 ID의 채용 공고를 수정합니다."""
     try:
         job_posting = await db.get(DBJobPosting, posting_id)
-        
+
         if job_posting is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="존재하지 않는 공고입니다."
             )
-        
+
         if job_posting.user_id != current_user.user_id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="잘못된 접근입니다."
             )
-        
-        for c in [
+
+        # 업데이트할 필드들
+        for field in [
             "url",
             "title",
             "company",
@@ -113,19 +118,19 @@ async def update_job_posting_endpoint(
             "end_date",
             "memo",
         ]:
-            setattr(job_posting, c, getattr(job_posting_update, c))
+            setattr(job_posting, field, getattr(job_posting_update, field))
+
         job_posting.updated_at = datetime.utcnow()
 
         await db.commit()
         await db.refresh(job_posting)
-        
-           
-    
-        
+
         return job_posting
+
     except HTTPException:
         raise
     except Exception as e:
+        await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"공고 수정 중 오류가 발생했습니다: {str(e)}"
@@ -138,32 +143,31 @@ async def delete_job_posting_endpoint(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """특정 ID의 채용 공고를 삭제합니다."""
+    """특정 ID의 채용 공고를 삭제합니다 (소프트 삭제)."""
     try:
         job_posting = await db.get(DBJobPosting, posting_id)
-        
+
         if job_posting is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="존재하지 않는 공고입니다."
             )
-        
+
         if job_posting.user_id != current_user.user_id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="잘못된 접근입니다."
             )
-        
-        job_posting.is_activate= False
-        
-        
-        
-           
-        
-        return
+
+        # 소프트 삭제: is_activate을 False로 설정
+        job_posting.is_activate = False
+
+        await db.commit()
+
     except HTTPException:
         raise
     except Exception as e:
+        await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"공고 삭제 중 오류가 발생했습니다: {str(e)}"

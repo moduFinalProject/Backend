@@ -5,6 +5,8 @@ from app.models import Code, Resume, File
 
 
 async def get_resume_response(db: AsyncSession, resume_id: int):
+    """이력서 상세 조회용 함수 - ResumeResponse 형태의 딕셔너리 반환"""
+
     ResumetypeCode = aliased(Code)
     GenderCode = aliased(Code)
     MilitaryServiceCode = aliased(Code)
@@ -55,8 +57,39 @@ async def get_resume_response(db: AsyncSession, resume_id: int):
         .where(and_(Resume.resume_id == resume_id, Resume.is_active == True))
     )
 
-    resume = await db.execute(stmt)
+    result = await db.execute(stmt)
+    row = result.unique().first()
 
-    resume = resume.unique().first()
+    if row is None:
+        return None
 
-    return resume
+    # 튜플에서 각 요소 추출
+    resume, gender_detail, resume_type_detail, military_service_detail, image_key = row
+
+    # ResumeResponse 형태의 딕셔너리로 변환
+    resume_dict = {
+        "title": resume.title,
+        "name": resume.name,
+        "email": resume.email,
+        "gender": resume.gender,
+        "gender_detail": gender_detail,
+        "address": resume.address,
+        "phone": resume.phone,
+        "military_service": resume.military_service,
+        "military_service_detail": military_service_detail,
+        "birth_date": resume.birth_date,
+        "self_introduction": resume.self_introduction,
+        "experiences": resume.experiences,
+        "educations": resume.educations,
+        "projects": resume.projects,
+        "activities": resume.activities,
+        "technology_stacks": resume.technology_stacks,
+        "qualifications": resume.qualifications,
+        "resume_type": resume.resume_type,
+        "resume_type_detail": resume_type_detail,
+        "created_at": resume.created_at,
+        "updated_at": resume.updated_at,
+        "image_key": image_key,  # presigned_url 생성에 필요
+    }
+
+    return resume_dict
