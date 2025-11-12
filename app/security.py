@@ -57,7 +57,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db : AsyncSessio
 
     user = await db.execute(stmt)
 
-    user = user.first()
+    user = user.scalar_one_or_none()
     
     if not user: 
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = "사용자를 찾을 수 없습니다.")
