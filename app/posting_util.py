@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
+from sqlalchemy import desc, select, update, delete
 from typing import Optional, List
 
 from app.models import JobPosting as DBJobPosting
@@ -24,10 +24,12 @@ async def create_job_posting(
     return db_job
 
 
-async def get_job_postings(db: AsyncSession) -> List[DBJobPosting]:
+async def get_job_postings(db: AsyncSession, user_id : int, page_size : int= 6, page : int= 1) -> List[DBJobPosting]:
     """모든 채용 공고 목록을 조회합니다."""
 
-    result = await db.execute(select(DBJobPosting))
+    offset = (page - 1) * page_size
+
+    result = await db.execute(select(DBJobPosting).where(DBJobPosting.user_id == user_id).order_by(desc(DBJobPosting.created_at)).offset(offset).limit(page_size))
     return result.scalars().all()
 
 
@@ -59,7 +61,7 @@ async def update_job_posting(
     stmt = (
         update(DBJobPosting)
         .where(DBJobPosting.posting_id == posting_id)
-        .values(**update_data)
+        .values(update**update_data)
         .execution_options(synchronize_session="fetch")
     )
     await db.execute(stmt)
@@ -71,9 +73,4 @@ async def update_job_posting(
 async def delete_job_posting(db: AsyncSession, posting_id: int) -> bool:
     """특정 채용 공고를 삭제합니다."""
 
-    stmt = delete(DBJobPosting).where(DBJobPosting.posting_id == posting_id)
-
-    result = await db.execute(stmt)
-    await db.commit()
-
-    return result.rowcount > 0
+   
