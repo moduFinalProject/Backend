@@ -7,7 +7,7 @@ from app.database import get_db # DB 세션 의존성 함수
 from app.models import User
 from app.schemas import JobPosting, JobPostingCreate, JobPostingUpdate # Pydantic 스키마
 from app.security import get_current_user
-import posting_util as crud  # app/job_postings.py 파일 (CRUD 로직)
+import app.posting_util as crud  # app/job_postings.py 파일 (CRUD 로직)
 
 router = APIRouter(prefix="/job-postings", tags=["Job Postings"])
 
