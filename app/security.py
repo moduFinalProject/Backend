@@ -4,10 +4,14 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError,jwt
 import secrets
 import os
+
+from sqlalchemy import select
 from app.database import get_db
 from app.login_logic import get_user_by_id
 from app.config.settings import settings
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models import User
 
 SECRET_KEY=settings.jwt_secret
 ALGORITHM=settings.jwt_algorithm
@@ -47,8 +51,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db : AsyncSessio
     payload = verify_token(token)
     if payload is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="유효하지 않은 토큰 입니다.")
-    
-    user = await get_user_by_id(db, payload.get('sub'))
+    payload.get('sub')
+                
+    stmt = select(User).where(User.unique_id == payload.get('sub'))
+
+    user = await db.execute(stmt)
+
+    user = user.first()
     
     if not user: 
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = "사용자를 찾을 수 없습니다.")

@@ -221,7 +221,8 @@ class TechnologyStackResponse(BaseModel):
 
 # ===== 이력서 스키마 =====
 class ResumeCreate(BaseModel):
-    title: Optional[str] = Field(default="내 이력서", max_length=30)
+    resume_type : str = Field(max_length=10)
+    title: str = Field(min_length=2, max_length=30)
     name: TrimmedStr = Field(max_length=50)
     email: EmailStr = Field(max_length=50)
     gender: str
