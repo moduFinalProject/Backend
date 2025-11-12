@@ -49,42 +49,107 @@ async def get_all_resumes(
     return resumes
 
 
+# ============ 기존 엔드포인트 (디버깅 중) ============
+# @router.get("/{resume_id}", response_model=ResumeResponse)
+# async def get_resume(
+#     resume_id: int,
+#     db: AsyncSession = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """특정 이력서 상세 조회"""
+#
+#     try:
+#         resume = await db.get(Resume, resume_id)
+#
+#         if resume is None:
+#             raise HTTPException(
+#                 status_code=status.HTTP_404_NOT_FOUND,
+#                 detail="존재하지 않는 이력서 입니다.",
+#             )
+#
+#         if resume.user_id != current_user.user_id:
+#             raise HTTPException(
+#                 status_code=status.HTTP_400_BAD_REQUEST, detail="잘못된 접근입니다."
+#             )
+#
+#         result = get_resume_response(db=db, resume_id=resume_id)
+#
+#         image_url = await generate_presigned_url(result.image_key)
+#
+#         db_resume= ResumeResponse.model_validate(result).model_dump()
+#
+#         db_resume['image_url'] = image_url
+#
+#         return db_resume
+#
+#     except Exception as e:
+#         print(f"error : {str(e)}")
+#         await db.rollback()
+#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="이력서 수정에 실패했습니다.")
+
+
+# ============ 디버깅 코드가 추가된 새로운 엔드포인트 ============
 @router.get("/{resume_id}", response_model=ResumeResponse)
 async def get_resume(
     resume_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """특정 이력서 상세 조회"""
+    """특정 이력서 상세 조회 (디버깅 버전)"""
 
     try:
+        print(f"[DEBUG] 요청된 resume_id: {resume_id}")
+        print(f"[DEBUG] 현재 사용자 ID: {current_user.user_id}")
+
         resume = await db.get(Resume, resume_id)
+        print(f"[DEBUG] DB에서 조회한 resume: {resume}")
 
         if resume is None:
+            print(f"[DEBUG] resume_id {resume_id}를 찾을 수 없습니다.")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="존재하지 않는 이력서 입니다.",
             )
 
         if resume.user_id != current_user.user_id:
+            print(f"[DEBUG] 접근 권한 없음. resume.user_id: {resume.user_id}, current_user.user_id: {current_user.user_id}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="잘못된 접근입니다."
             )
-        
-        result = get_resume_response(db=db, resume_id=resume_id)
-        
-        image_url = await generate_presigned_url(result.image_key)
-        
-        db_resume= ResumeResponse.model_validate(result).model_dump()
+
+        print(f"[DEBUG] get_resume_response 함수 호출 중...")
+        result = await get_resume_response(db=db, resume_id=resume_id)
+        print(f"[DEBUG] get_resume_response 결과: {result}")
+
+        if result.image_key:
+            print(f"[DEBUG] image_key 존재: {result.image_key}")
+            image_url = await generate_presigned_url(result.image_key)
+            print(f"[DEBUG] presigned_url 생성됨: {image_url}")
+        else:
+            print(f"[DEBUG] image_key가 None 또는 empty")
+            image_url = None
+
+        print(f"[DEBUG] ResumeResponse.model_validate 호출 중...")
+        db_resume = ResumeResponse.model_validate(result).model_dump()
+        print(f"[DEBUG] model_validate 성공")
 
         db_resume['image_url'] = image_url
+        print(f"[DEBUG] 최종 응답 준비 완료")
 
         return db_resume
 
-    except Exception as e:
-        print(f"error : {str(e)}")
+    except HTTPException as http_exc:
+        print(f"[DEBUG] HTTPException 발생: {http_exc.detail}")
         await db.rollback()
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="이력서 수정에 실패했습니다.")
+        raise
+    except Exception as e:
+        print(f"[ERROR] 예상치 못한 오류 발생")
+        print(f"[ERROR] 에러 타입: {type(e).__name__}")
+        print(f"[ERROR] 에러 메시지: {str(e)}")
+        import traceback
+        print(f"[ERROR] 스택 트레이스:\n{traceback.format_exc()}")
+        await db.rollback()
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="이력서 조회에 실패했습니다.")
 
 
 

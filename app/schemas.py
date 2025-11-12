@@ -314,13 +314,14 @@ class ResumeListResponse(BaseModel):
 # ===== pydantic 스키마 =====
 class JobPostingBase(BaseModel):
     """채용 공고 생성 및 수정을 위한 공통 필드 (ERD 컬럼명 반영)"""
-    
+
     url: Optional[str] = Field(None, max_length=200, description="공고 URL")
     title: str = Field(..., max_length=30, description="제목")
     company: str = Field(..., max_length=30, description="회사명")
     content: str = Field(..., max_length=300, description="내용 요약")
     qualification: Optional[str] = Field(None, max_length=300, description="자격 요건")
     prefer: Optional[str] = Field(None, max_length=300, description="우대 사항")
+    end_date: Optional[date] = Field(None, description="공고 마감일")
     memo: Optional[str] = Field(None, max_length=500, description="메모")
 
 
@@ -330,13 +331,14 @@ class JobPostingCreate(JobPostingBase):
 
 class JobPostingUpdate(JobPostingBase):
     """채용 공고 수정을 위한 스키마 (모든 필드는 선택 사항)"""
-    
+
     url: Optional[str] = Field(None, max_length=200, description="공고 URL")
     title: Optional[str] = Field(None, max_length=30, description="제목")
     company: Optional[str] = Field(None, max_length=30, description="회사명")
     content: Optional[str] = Field(None, max_length=300, description="내용 요약")
     qualification: Optional[str] = Field(None, max_length=300, description="자격 요건")
     prefer: Optional[str] = Field(None, max_length=300, description="우대 사항")
+    end_date: Optional[date] = Field(None, description="공고 마감일")
     memo: Optional[str] = Field(None, max_length=500, description="메모")
 
 
