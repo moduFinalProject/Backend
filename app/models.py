@@ -138,6 +138,7 @@ class JobPosting(Base):
     qualification = Column(VARCHAR(300), nullable=False)
     prefer = Column(VARCHAR(300), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    end_date = Column(Date)
     memo = Column(VARCHAR(500))
     is_activate = Column(Boolean, default=True)
 

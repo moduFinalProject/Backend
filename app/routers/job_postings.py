@@ -110,6 +110,7 @@ async def update_job_posting_endpoint(
             "content",
             "qualification",
             "prefer",
+            "end_date",
             "memo",
         ]:
             setattr(job_posting, c, getattr(job_posting_update, c))
