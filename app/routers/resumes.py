@@ -48,7 +48,7 @@ async def get_all_resumes(
 
     result = await db.execute(
         select(Resume)
-        .where(Resume.user_id == current_user.user_id)
+        .where(and_(Resume.user_id == current_user.user_id, Resume.is_active == False))
         .order_by(desc(Resume.created_at))
         .offset(offset)
         .limit(page_size)
