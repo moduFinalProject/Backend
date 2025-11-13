@@ -30,9 +30,6 @@ from app.storage_util import (
 )
 
 
-router = APIRouter(prefix="/resumes", tags=["resumes"])
-
-
 router = APIRouter(prefix="/resumes", tags=["Resumes"])
 
 
@@ -88,12 +85,16 @@ async def get_all_resumes(
 
     rows = result.all()
     resumes = []
-    for row in rows:
-        resume = row[0]
-        print(resume.title)
-        resume.resume_type_detail = row[1]
-        print(row[1])
-        resumes.append(resume)
+    for resume, resume_type_detail in rows:
+        resumes.append({
+            "resume_id": resume.resume_id,
+            "user_id": resume.user_id,
+            "title": resume.title,
+            "created_at": resume.created_at,
+            "resume_type": resume.resume_type,
+            "resume_type_detail": resume_type_detail,
+            "is_active": resume.is_active,
+        })
     return resumes
 
 
@@ -134,7 +135,7 @@ async def get_resume(
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="이력서 수정에 실패했습니다.",
+            detail="이력서 조회에 실패했습니다.",
         )
 
 

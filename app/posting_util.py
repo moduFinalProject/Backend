@@ -23,15 +23,26 @@ async def create_job_posting(
 
 
 async def get_job_postings(
-    db: AsyncSession, user_id: int, page_size: int = 6, page: int = 1
+    db: AsyncSession,
+    user_id: int,
+    page_size: int = 6,
+    page: int = 1,
+    title: Optional[str] = None,
 ) -> List[DBJobPosting]:
     """모든 채용 공고 목록을 조회합니다."""
 
     offset = (page - 1) * page_size
 
+    title = title.strip() if title else None
+
+    search_condition = (
+        [DBJobPosting.title.ilike(f"%{title}%"), DBJobPosting.user_id == user_id]
+        if title
+        else [DBJobPosting.user_id == user_id]
+    )
     result = await db.execute(
         select(DBJobPosting)
-        .where(DBJobPosting.user_id == user_id)
+        .where(*search_condition)
         .order_by(desc(DBJobPosting.created_at))
         .offset(offset)
         .limit(page_size)
@@ -52,15 +63,10 @@ async def update_job_posting(
     db: AsyncSession, posting_id: int, job_posting_update: JobPostingUpdate
 ) -> Optional[DBJobPosting]:
     """특정 채용 공고를 수정합니다."""
-    from datetime import datetime
-
     update_data = job_posting_update.model_dump(exclude_unset=True)
 
     if not update_data:
         return await get_job_posting(db, posting_id)
-
-    # updated_at을 자동으로 현재 시간으로 설정
-    update_data["updated_at"] = datetime.utcnow()
 
     stmt = (
         update(DBJobPosting)

@@ -161,9 +161,6 @@ class JobPosting(Base):
     created_at = Column(
         TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
-    updated_at = Column(
-        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
-    )
     end_date = Column(Date)
     memo = Column(VARCHAR(500))
     is_activate = Column(Boolean, default=True)
