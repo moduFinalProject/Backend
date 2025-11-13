@@ -36,9 +36,9 @@ async def get_job_postings(
     title = title.strip() if title else None
 
     search_condition = (
-        [DBJobPosting.title.ilike(f"%{title}%"), DBJobPosting.user_id == user_id]
+        [DBJobPosting.title.ilike(f"%{title}%"), DBJobPosting.user_id == user_id, DBJobPosting.is_activate == True]
         if title
-        else [DBJobPosting.user_id == user_id]
+        else [DBJobPosting.user_id == user_id,DBJobPosting.is_activate == True]
     )
     result = await db.execute(
         select(DBJobPosting)
@@ -54,7 +54,7 @@ async def get_job_posting(db: AsyncSession, posting_id: int) -> Optional[DBJobPo
     """특정 채용 공고를 조회합니다."""
 
     result = await db.execute(
-        select(DBJobPosting).where(DBJobPosting.posting_id == posting_id)
+        select(DBJobPosting).where(DBJobPosting.posting_id == posting_id,DBJobPosting.is_activate == True)
     )
     return result.scalar_one_or_none()
 

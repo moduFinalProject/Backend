@@ -505,7 +505,7 @@ async def update_resume(
         )
 
 
-@router.patch("/{resume_id}")
+@router.patch("/{resume_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def deactivate_resume(
     resume_id: int,
     db: AsyncSession = Depends(get_db),
