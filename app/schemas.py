@@ -187,6 +187,7 @@ class EducationResponse(BaseModel):
     organ : str
     department : str
     degree_level : Optional[str] = None
+    degree_level_detail : Optional[str] = None
     score : Optional[str] = None
     start_date : date
     end_date: Optional[date] = None
@@ -320,6 +321,8 @@ class ResumeListResponse(BaseModel):
     title: str
     created_at: datetime
     updated_at: datetime
+    resume_type: str
+    resume_type_detail : str
     
     model_config = ConfigDict(from_attributes=True)
 

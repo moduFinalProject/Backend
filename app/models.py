@@ -1,7 +1,17 @@
-from sqlalchemy import VARCHAR,Boolean,Column,Date,ForeignKey,Integer,Text,TIMESTAMP
+from sqlalchemy import (
+    VARCHAR,
+    Boolean,
+    Column,
+    Date,
+    ForeignKey,
+    Integer,
+    Text,
+    TIMESTAMP,
+)
 from app.database import Base
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
 class User(Base):
@@ -9,7 +19,7 @@ class User(Base):
     __tablename__ = "users"
 
     user_id = Column(Integer, primary_key=True)
-    unique_id = Column(VARCHAR(22),unique=True,nullable=False)
+    unique_id = Column(VARCHAR(22), unique=True, nullable=False)
     email = Column(VARCHAR(100), unique=True, nullable=False)
     name = Column(VARCHAR(50), nullable=False)
     address = Column(VARCHAR(100))
@@ -17,11 +27,15 @@ class User(Base):
     birth_date = Column(Date, nullable=False)
     provider = Column(VARCHAR(50))
     provider_id = Column(VARCHAR(50))
-    user_type = Column(VARCHAR(10), default='1')
+    user_type = Column(VARCHAR(10), default="1")
     is_activate = Column(Boolean, default=True)
     deleted_at = Column(TIMESTAMP(timezone=True))
-    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
     last_accessed = Column(TIMESTAMP(timezone=True))
     gender = Column(VARCHAR(10), nullable=False)
     is_sanctions = Column(Boolean, default=False)
@@ -89,8 +103,12 @@ class UserBlacklist(Base):
         Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False
     )
     reason = Column(VARCHAR(200))
-    blocked_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    blocked_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
     block_period = Column(TIMESTAMP(timezone=True))
 
     blocker = relationship(
@@ -117,8 +135,12 @@ class UserActivityLog(Base):
     action_type = Column(VARCHAR(50))
     description = Column(VARCHAR(200))
     ip_address = Column(VARCHAR(100))
-    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
 
     user = relationship("User", back_populates="activity_logs")
 
@@ -136,7 +158,9 @@ class JobPosting(Base):
     company = Column(VARCHAR(30), nullable=False)
     qualification = Column(VARCHAR(300), nullable=False)
     prefer = Column(VARCHAR(300), nullable=False)
-    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
     end_date = Column(Date)
     memo = Column(VARCHAR(500))
     is_activate = Column(Boolean, default=True)
@@ -169,8 +193,12 @@ class Resume(Base):
     resume_type = Column(VARCHAR(10), nullable=False)
     is_active = Column(Boolean, default=True)
     deleted_at = Column(TIMESTAMP(timezone=True))
-    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
     name = Column(VARCHAR(50))
     email = Column(VARCHAR(50))
     address = Column(VARCHAR(50))
@@ -300,6 +328,7 @@ class Education(Base):
     resume = relationship("Resume", back_populates="educations")
 
 
+
 class Qualification(Base):
 
     __tablename__ = "qualifications"
@@ -330,8 +359,10 @@ class File(Base):
     org_file_name = Column(VARCHAR(100), nullable=False)
     mod_file_name = Column(VARCHAR(100), nullable=False)
     file_key = Column(VARCHAR(100), nullable=False)
-    purpose = Column(VARCHAR(50),nullable=False)
-    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    purpose = Column(VARCHAR(50), nullable=False)
+    created_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
 
     user = relationship("User", back_populates="files")
     resume = relationship("Resume", back_populates="files")
@@ -355,7 +386,9 @@ class ResumeFeedback(Base):
     )
     parent_content = Column(Text, nullable=False)
     matching_rate = Column(Integer, nullable=False)
-    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
 
     resume = relationship("Resume", back_populates="resume_feedbacks")
     user = relationship("User", back_populates="resume_feedbacks")
@@ -380,7 +413,9 @@ class FeedbackContent(Base):
     )
     feedback_devision = Column(VARCHAR(10), nullable=False)
     feedback_result = Column(Text, nullable=False)
-    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
 
     resume_feedback = relationship("ResumeFeedback", back_populates="feedback_contents")
 
@@ -463,8 +498,12 @@ class StudyGuide(Base):
     description = Column(VARCHAR(200), nullable=False)
     is_activate = Column(Boolean, default=True)
     deleted_at = Column(TIMESTAMP(timezone=True))
-    created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
 
     user = relationship("User", back_populates="study_guides")
     job_posting = relationship("JobPosting", back_populates="study_guides")
