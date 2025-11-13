@@ -357,11 +357,10 @@ class JobPostingUpdate(BaseModel):
 
 class JobPostingResponse(JobPostingBase):
     """클라이언트에게 반환할 최종 데이터 스키마 (응답 모델)"""
-    
+
     posting_id: int = Field(..., description="채용 공고 고유 ID")
     user_id: int = Field(..., description="공고를 작성한 사용자 ID (작성자)")
     created_at: datetime = Field(..., description="생성 시간")
-    updated_at: datetime = Field(..., description="마지막 업데이트 시간")
 
     class Config:
         """SQLAlchemy ORM 모드 활성화"""

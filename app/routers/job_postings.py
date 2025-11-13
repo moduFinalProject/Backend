@@ -119,8 +119,6 @@ async def update_job_posting_endpoint(
         ]:
             setattr(job_posting, field, getattr(job_posting_update, field))
 
-        job_posting.updated_at = datetime.utcnow()
-
         await db.commit()
         await db.refresh(job_posting)
 
