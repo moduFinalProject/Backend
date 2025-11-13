@@ -1,4 +1,4 @@
-from sqlalchemy import and_, select, in_
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, joinedload, contains_eager
 from app.models import Code, Education, Resume, File
