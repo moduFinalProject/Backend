@@ -58,15 +58,15 @@ async def get_all_resumes(
     return resumes
 
 
-@router.get("/{title}", response_model=List[ResumeListResponse])
-async def get_all_resumes(
+@router.get("/search", response_model=List[ResumeListResponse])
+async def search_resumes(
     title : str,
     page: int = 1,
     page_size: int = 6,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """현재 사용자의 모든 이력서 목록 조회"""
+    """이력서 검색 목록 조회"""
     
     title = title.strip()
 
