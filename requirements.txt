@@ -32,4 +32,11 @@ boto3==1.35.0
 # 이미지 처리
 pillow>=10.4.0
 
-email-validator == 2.3.0
+# 이메일 검증
+email-validator==2.3.0
+
+# LangChain & AI
+langchain==1.0.5
+langchain-openai==0.3.11
+langchain-core==1.1.9
+langchain-community==1.1.9
