@@ -227,7 +227,7 @@ class Project(Base):
     resume_id = Column(
         Integer, ForeignKey("resumes.resume_id", ondelete="CASCADE"), nullable=False
     )
-    title = Column(VARCHAR(20), nullable=False)
+    title = Column(VARCHAR(100), nullable=False)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date)
     description = Column(VARCHAR(500))
@@ -243,7 +243,7 @@ class Activity(Base):
     resume_id = Column(
         Integer, ForeignKey("resumes.resume_id", ondelete="CASCADE"), nullable=False
     )
-    title = Column(VARCHAR(20), nullable=False)
+    title = Column(VARCHAR(100), nullable=False)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date)
     description = Column(VARCHAR(500))
@@ -259,9 +259,9 @@ class Experience(Base):
     resume_id = Column(
         Integer, ForeignKey("resumes.resume_id", ondelete="CASCADE"), nullable=False
     )
-    job_title = Column(VARCHAR(20), nullable=False)
-    department = Column(VARCHAR(20), nullable=False)
-    position = Column(VARCHAR(20))
+    job_title = Column(VARCHAR(100), nullable=False)
+    department = Column(VARCHAR(100), nullable=False)
+    position = Column(VARCHAR(100))
     job_description = Column(VARCHAR(1000))
     employment_status = Column(Boolean, nullable=False)
     start_date = Column(Date, nullable=False)
@@ -278,7 +278,7 @@ class TechnologyStack(Base):
     resume_id = Column(
         Integer, ForeignKey("resumes.resume_id", ondelete="CASCADE"), nullable=False
     )
-    title = Column(VARCHAR(20), nullable=False)
+    title = Column(VARCHAR(100), nullable=False)
 
     resume = relationship("Resume", back_populates="technology_stacks")
 
@@ -291,10 +291,10 @@ class Education(Base):
     resume_id = Column(
         Integer, ForeignKey("resumes.resume_id", ondelete="CASCADE"), nullable=False
     )
-    organ = Column(VARCHAR(20), nullable=False)
-    department = Column(VARCHAR(20), nullable=False)
-    degree_level = Column(VARCHAR(10))
-    score = Column(VARCHAR(10))
+    organ = Column(VARCHAR(100), nullable=False)
+    department = Column(VARCHAR(100), nullable=False)
+    degree_level = Column(VARCHAR(50))
+    score = Column(VARCHAR(50))
     start_date = Column(Date, nullable=False)
     end_date = Column(Date)
 
@@ -309,10 +309,10 @@ class Qualification(Base):
     resume_id = Column(
         Integer, ForeignKey("resumes.resume_id", ondelete="CASCADE"), nullable=False
     )
-    title = Column(VARCHAR(20), nullable=False)
+    title = Column(VARCHAR(100), nullable=False)
     acquisition_date = Column(Date, nullable=False)
-    score = Column(VARCHAR(10))
-    organ = Column(VARCHAR(20))
+    score = Column(VARCHAR(50))
+    organ = Column(VARCHAR(100))
 
     resume = relationship("Resume", back_populates="qualifications")
 
