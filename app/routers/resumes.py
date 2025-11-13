@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 import json
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
@@ -38,7 +38,7 @@ router = APIRouter(prefix="/resumes", tags=["Resumes"])
 
 @router.get("/", response_model=List[ResumeListResponse])
 async def get_all_resumes(
-    title: str,
+    title: Optional[str] = None,
     page: int = 1,
     page_size: int = 6,
     db: AsyncSession = Depends(get_db),
@@ -48,7 +48,7 @@ async def get_all_resumes(
 
     offset = (page - 1) * page_size
 
-    title = title.strip()
+    title = title.strip() if title else None
 
     if not title:
         result = await db.execute(
@@ -78,7 +78,7 @@ async def get_all_resumes(
                 and_(
                     Resume.user_id == current_user.user_id,
                     Resume.is_active == True,
-                    title in Resume.title,
+                    Resume.title.ilike(f"%{title}%"),
                 )
             )
             .order_by(desc(Resume.created_at))
