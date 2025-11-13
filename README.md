@@ -14,3 +14,4 @@
 ### Frontend
 - React, TypeScript, vanilla-extract(CSS IN JS)
 - Figma(화면구현), zustand(상태관리), e2e(테스트)
+
