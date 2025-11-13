@@ -163,6 +163,8 @@ async def delete_job_posting_endpoint(
 
         await db.commit()
 
+        return
+
     except HTTPException:
         raise
     except Exception as e:
