@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models import (
     Activity,
+    Code,
     Education,
     Experience,
     Project,
@@ -47,8 +48,33 @@ async def get_all_resumes(
     offset = (page - 1) * page_size
 
     result = await db.execute(
-        select(Resume)
+        select(Resume, Code.code_detail.label("resume_type_detail")).outerjoin(Code,(Code.division == "resume_type")&(Code.detail_id == Resume.resume_type))
         .where(and_(Resume.user_id == current_user.user_id, Resume.is_active == True))
+        .order_by(desc(Resume.created_at))
+        .offset(offset)
+        .limit(page_size)
+    )
+    resumes = result.scalars().all()
+    return resumes
+
+
+@router.get("/search", response_model=List[ResumeListResponse])
+async def search_resumes(
+    title : str,
+    page: int = 1,
+    page_size: int = 6,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """이력서 검색 목록 조회"""
+    
+    title = title.strip()
+
+    offset = (page - 1) * page_size
+
+    result = await db.execute(
+        select(Resume, Code.code_detail.label("resume_type_detail")).outerjoin(Code,(Code.division == "resume_type")&(Code.detail_id == Resume.resume_type))
+        .where(and_(Resume.user_id == current_user.user_id, Resume.is_active == True, title in Resume.title))
         .order_by(desc(Resume.created_at))
         .offset(offset)
         .limit(page_size)

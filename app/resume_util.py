@@ -1,7 +1,7 @@
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, joinedload, contains_eager
-from app.models import Code, Resume, File
+from app.models import Code, Education, Resume, File
 
 
 async def get_resume_response(db: AsyncSession, resume_id: int):
@@ -65,6 +65,23 @@ async def get_resume_response(db: AsyncSession, resume_id: int):
 
     # 튜플에서 각 요소 추출
     resume, gender_detail, resume_type_detail, military_service_detail, image_key = row
+
+    # educations의 degree_level 값들 추출
+    degree_levels = [edu.degree_level for edu in resume.educations if edu.degree_level]
+
+    # degree_level에 해당하는 Code 데이터 조회
+    degree_code_map = {}
+    if degree_levels:
+        degree_codes_stmt = select(Code).where(
+            and_(Code.division == "degree", Code.detail_id.in_(degree_levels))
+        )
+        degree_codes_result = await db.execute(degree_codes_stmt)
+        degree_codes = degree_codes_result.scalars().all()
+        degree_code_map = {code.detail_id: code.code_detail for code in degree_codes}
+
+    # educations에 degree_level_detail 추가
+    for education in resume.educations:
+        education.degree_level_detail = degree_code_map.get(education.degree_level)
 
     # ResumeResponse 형태의 딕셔너리로 변환
     resume_dict = {
