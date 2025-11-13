@@ -52,15 +52,20 @@ async def update_job_posting(
     db: AsyncSession, posting_id: int, job_posting_update: JobPostingUpdate
 ) -> Optional[DBJobPosting]:
     """특정 채용 공고를 수정합니다."""
+    from datetime import datetime
+
     update_data = job_posting_update.model_dump(exclude_unset=True)
 
     if not update_data:
         return await get_job_posting(db, posting_id)
 
+    # updated_at을 자동으로 현재 시간으로 설정
+    update_data["updated_at"] = datetime.utcnow()
+
     stmt = (
         update(DBJobPosting)
         .where(DBJobPosting.posting_id == posting_id)
-        .values(update**update_data)
+        .values(**update_data)
         .execution_options(synchronize_session="fetch")
     )
     await db.execute(stmt)
