@@ -134,7 +134,6 @@ class JobPosting(Base):
     url = Column(VARCHAR(1000))
     title = Column(VARCHAR(30), nullable=False)
     company = Column(VARCHAR(30), nullable=False)
-    content = Column(VARCHAR(300))
     qualification = Column(VARCHAR(300), nullable=False)
     prefer = Column(VARCHAR(300), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc))

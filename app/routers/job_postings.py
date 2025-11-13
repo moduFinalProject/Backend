@@ -112,7 +112,6 @@ async def update_job_posting_endpoint(
             "url",
             "title",
             "company",
-            "content",
             "qualification",
             "prefer",
             "end_date",
