@@ -1,7 +1,7 @@
 from datetime import datetime
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Optional
 
 from app.database import get_db
 from app.models import User, JobPosting as DBJobPosting
@@ -36,13 +36,13 @@ async def create_job_posting_endpoint(
 
 
 @router.get("/", response_model=List[JobPostingResponse])
-async def read_all_job_postings_endpoint(page : int= 1, page_size : int= 6,
+async def read_all_job_postings_endpoint(title : Optional[str] = None,page : int= 1, page_size : int= 6,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """모든 채용 공고 목록을 조회합니다."""
     try:
-        job_postings = await crud.get_job_postings(db=db,user_id=current_user.user_id, page = page, page_size = page_size)
+        job_postings = await crud.get_job_postings(db=db,user_id=current_user.user_id, page = page, page_size = page_size, title = title)
         return job_postings
     except Exception as e:
         raise HTTPException(

@@ -23,15 +23,26 @@ async def create_job_posting(
 
 
 async def get_job_postings(
-    db: AsyncSession, user_id: int, page_size: int = 6, page: int = 1
+    db: AsyncSession,
+    user_id: int,
+    page_size: int = 6,
+    page: int = 1,
+    title: Optional[str] = None,
 ) -> List[DBJobPosting]:
     """모든 채용 공고 목록을 조회합니다."""
 
     offset = (page - 1) * page_size
 
+    title = title.strip() if title else None
+
+    search_condition = (
+        [DBJobPosting.title.ilike(f"%{title}%"), DBJobPosting.user_id == user_id]
+        if title
+        else [DBJobPosting.user_id == user_id]
+    )
     result = await db.execute(
         select(DBJobPosting)
-        .where(DBJobPosting.user_id == user_id)
+        .where(*search_condition)
         .order_by(desc(DBJobPosting.created_at))
         .offset(offset)
         .limit(page_size)
