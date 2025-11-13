@@ -31,7 +31,7 @@ async def get_resume_response(db: AsyncSession, resume_id: int):
         )
         .outerjoin(
             MilitaryServiceCode,
-            (MilitaryServiceCode.division == "military_service")
+            (MilitaryServiceCode.division == "military")
             & (MilitaryServiceCode.detail_id == Resume.military_service),
         )
         .outerjoin(
