@@ -90,7 +90,9 @@ async def get_all_resumes(
     resumes = []
     for row in rows:
         resume = row[0]
+        print(resume.title)
         resume.resume_type_detail = row[1]
+        print(row[1])
         resumes.append(resume)
     return resumes
 
