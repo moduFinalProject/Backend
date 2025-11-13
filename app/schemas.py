@@ -368,3 +368,15 @@ class JobPostingResponse(JobPostingBase):
 
 
 
+class UserInfo(BaseModel):
+    
+    name : str
+    email: str
+    gender: str
+    phone : str
+    birth_date: str
+    address : str
+    military_service : str
+    
+    model_config = ConfigDict(from_attributes=True)
+    
