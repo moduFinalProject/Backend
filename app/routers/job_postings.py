@@ -5,7 +5,7 @@ from typing import List
 
 from app.database import get_db
 from app.models import User, JobPosting as DBJobPosting
-from app.schemas import JobPosting, JobPostingCreate, JobPostingUpdate
+from app.schemas import JobPostingResponse, JobPostingCreate, JobPostingUpdate
 from app.security import get_current_user
 
 import app.posting_util as crud  # app/job_postings.py 파일 (CRUD 로직)
@@ -14,7 +14,7 @@ import app.posting_util as crud  # app/job_postings.py 파일 (CRUD 로직)
 router = APIRouter(prefix="/job-postings", tags=["Job Postings"])
 
 
-@router.post("/", response_model=JobPosting, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=JobPostingResponse, status_code=status.HTTP_201_CREATED)
 async def create_job_posting_endpoint(
     job_posting: JobPostingCreate,
     db: AsyncSession = Depends(get_db),
@@ -35,7 +35,7 @@ async def create_job_posting_endpoint(
         )
 
 
-@router.get("/", response_model=List[JobPosting])
+@router.get("/", response_model=List[JobPostingResponse])
 async def read_all_job_postings_endpoint(page : int= 1, page_size : int= 6,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -51,7 +51,7 @@ async def read_all_job_postings_endpoint(page : int= 1, page_size : int= 6,
         )
 
 
-@router.get("/{posting_id}", response_model=JobPosting)
+@router.get("/{posting_id}", response_model=JobPostingResponse)
 async def read_job_posting_endpoint(
     posting_id: int,
     db: AsyncSession = Depends(get_db),
@@ -84,7 +84,7 @@ async def read_job_posting_endpoint(
         )
 
 
-@router.put("/{posting_id}", response_model=JobPosting)
+@router.put("/{posting_id}", response_model=JobPostingResponse)
 async def update_job_posting_endpoint(
     posting_id: int,
     job_posting_update: JobPostingUpdate,

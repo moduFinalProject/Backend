@@ -356,7 +356,7 @@ class JobPostingUpdate(BaseModel):
     memo: Optional[str] = Field(None, max_length=500, description="메모")
 
 
-class JobPosting(JobPostingBase):
+class JobPostingResponse(JobPostingBase):
     """클라이언트에게 반환할 최종 데이터 스키마 (응답 모델)"""
     
     posting_id: int = Field(..., description="채용 공고 고유 ID")

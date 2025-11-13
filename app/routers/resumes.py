@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 import json
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
@@ -38,48 +38,62 @@ router = APIRouter(prefix="/resumes", tags=["Resumes"])
 
 @router.get("/", response_model=List[ResumeListResponse])
 async def get_all_resumes(
+    title: Optional[str] = None,
     page: int = 1,
     page_size: int = 6,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """현재 사용자의 모든 이력서 목록 조회"""
+    """현재 사용자의 모든 이력서 목록 조회(검색)"""
 
     offset = (page - 1) * page_size
 
-    result = await db.execute(
-        select(Resume, Code.code_detail.label("resume_type_detail")).outerjoin(Code,(Code.division == "resume_type")&(Code.detail_id == Resume.resume_type))
-        .where(and_(Resume.user_id == current_user.user_id, Resume.is_active == True))
-        .order_by(desc(Resume.created_at))
-        .offset(offset)
-        .limit(page_size)
-    )
-    resumes = result.scalars().all()
-    return resumes
+    title = title.strip() if title else None
 
+    if not title:
+        result = await db.execute(
+            select(Resume, Code.code_detail.label("resume_type_detail"))
+            .outerjoin(
+                Code,
+                (Code.division == "resume_type")
+                & (Code.detail_id == Resume.resume_type),
+            )
+            .where(
+                and_(Resume.user_id == current_user.user_id, Resume.is_active == True)
+            )
+            .order_by(desc(Resume.created_at))
+            .offset(offset)
+            .limit(page_size)
+        )
 
-@router.get("/search", response_model=List[ResumeListResponse])
-async def search_resumes(
-    title : str,
-    page: int = 1,
-    page_size: int = 6,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    """이력서 검색 목록 조회"""
-    
-    title = title.strip()
+    else:
+        result = await db.execute(
+            select(Resume, Code.code_detail.label("resume_type_detail"))
+            .outerjoin(
+                Code,
+                (Code.division == "resume_type")
+                & (Code.detail_id == Resume.resume_type),
+            )
+            .where(
+                and_(
+                    Resume.user_id == current_user.user_id,
+                    Resume.is_active == True,
+                    Resume.title.ilike(f"%{title}%"),
+                )
+            )
+            .order_by(desc(Resume.created_at))
+            .offset(offset)
+            .limit(page_size)
+        )
 
-    offset = (page - 1) * page_size
-
-    result = await db.execute(
-        select(Resume, Code.code_detail.label("resume_type_detail")).outerjoin(Code,(Code.division == "resume_type")&(Code.detail_id == Resume.resume_type))
-        .where(and_(Resume.user_id == current_user.user_id, Resume.is_active == True, title in Resume.title))
-        .order_by(desc(Resume.created_at))
-        .offset(offset)
-        .limit(page_size)
-    )
-    resumes = result.scalars().all()
+    rows = result.all()
+    resumes = []
+    for row in rows:
+        resume = row[0]
+        print(resume.title)
+        resume.resume_type_detail = row[1]
+        print(row[1])
+        resumes.append(resume)
     return resumes
 
 
@@ -87,7 +101,7 @@ async def search_resumes(
 async def get_resume(
     resume_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """특정 이력서 상세 조회"""
 
@@ -109,18 +123,19 @@ async def get_resume(
 
         image_url = await generate_presigned_url(result.get("image_key"))
 
-        db_resume= ResumeResponse.model_validate(result).model_dump()
+        db_resume = ResumeResponse.model_validate(result).model_dump()
 
-        db_resume['image_url'] = image_url
+        db_resume["image_url"] = image_url
 
         return db_resume
 
     except Exception as e:
         print(f"error : {str(e)}")
         await db.rollback()
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="이력서 수정에 실패했습니다.")
-
-
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="이력서 수정에 실패했습니다.",
+        )
 
 
 # ============ 기존 엔드포인트 (디버깅 중) ============
