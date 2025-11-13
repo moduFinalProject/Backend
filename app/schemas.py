@@ -374,7 +374,7 @@ class UserInfo(BaseModel):
     email: str
     gender: str
     phone : str
-    birth_date: str
+    birth_date: date 
     address : str
     military_service : str
     
