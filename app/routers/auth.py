@@ -195,7 +195,7 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
                 "code": code.code,
                 "client_id": settings.google_client_id,
                 "client_secret": settings.google_client_secret,
-                "redirect_uri": "{settings.front_end_domain}/frontend/googleCallback",
+                "redirect_uri": f"{settings.front_end_domain}/frontend/googleCallback",
                 "grant_type": "authorization_code",
             }
             print(f"[DEBUG] 토큰 요청 payload: {token_data_payload}")
