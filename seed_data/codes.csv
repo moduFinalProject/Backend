@@ -34,9 +34,9 @@ code_id,detail_id,division,code_detail
 8,1,feedback_division,필수
 8,2,feedback_division,권장
 8,3,feedback_division,제안
-9,1,interview_feedback,잘한점
-9,2,interview_feedback,개선필요
-9,3,interview_feedback,제안
+9,1,interview_feedback,잘된 부분
+9,2,interview_feedback,개선 제안
+9,3,interview_feedback,추가 권장사항
 10,1,study_priority,필수 기술
 10,2,study_priority,중요 기술
 10,3,study_priority,추가 학습
