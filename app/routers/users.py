@@ -30,7 +30,6 @@ async def get_profile(
         "phone": current_user.phone,
         "address": current_user.address,  # 추가!
         "birth_date": current_user.birth_date,
-        "gender": current_user.gender,
         "created_at": current_user.created_at,
         "last_accessed": current_user.last_accessed
     }
@@ -58,7 +57,6 @@ async def update_profile(
             "phone": current_user.phone,
             "address": current_user.address,
             "birth_date": current_user.birth_date,
-            "gender": current_user.gender,
             "created_at": current_user.created_at,
             "last_accessed": current_user.last_accessed
         }
