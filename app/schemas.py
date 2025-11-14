@@ -403,12 +403,13 @@ class UserProfileUpdate(BaseModel):
     email: Optional[EmailStr] = Field(None, max_length=100)
     phone: Optional[str] = Field(None, max_length=20)
     address: Optional[str] = Field(None, max_length=100)
-    
+
     @field_validator('name', 'phone', 'address')
     @classmethod
     def strip_strings(cls, v):
         if isinstance(v, str):
             return v.strip()
+
         return v
 
 
@@ -425,4 +426,3 @@ class ResumeFeedbackCreate(BaseModel):
     parent_content : str
     matching_rate : int = Field(max_digits=100)
     feedback : List[FeedbackContentCreate]
-    
