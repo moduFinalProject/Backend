@@ -28,11 +28,9 @@ async def get_profile(
         "name": current_user.name,
         "email": current_user.email,
         "phone": current_user.phone,
-        "address": current_user.address,  # 추가!
-        "birth_date": current_user.birth_date,
-        "gender": current_user.gender,
         "address": current_user.address,
         "birth_date": current_user.birth_date,
+        "gender": current_user.gender,
         "created_at": current_user.created_at,
         "last_accessed": current_user.last_accessed
     }
@@ -71,4 +69,25 @@ async def update_profile(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"프로필 수정 중 오류가 발생했습니다: {str(e)}"
+        )
+
+
+
+
+@router.delete("/account", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_account(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """계정 비활성화 (소프트 삭제)"""
+    try:
+        current_user.is_active = False
+        await db.commit()
+
+        return
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"계정 비활성화 중 오류가 발생했습니다: {str(e)}"
         )
