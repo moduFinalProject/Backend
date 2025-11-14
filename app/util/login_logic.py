@@ -26,7 +26,7 @@ async def get_user_by_id(db: AsyncSession, user_id: str):
             (UsertypeCode.division == "user_type")
             & (UsertypeCode.detail_id == User.user_type),
         )
-        .where(User.unique_id == user_id, User.is_activate == True)
+        .where(User.unique_id == user_id, User.is_active == True)
     )
 
     user = await db.execute(stmt)
@@ -38,7 +38,7 @@ async def get_user_by_id(db: AsyncSession, user_id: str):
 
 async def get_user_by_email(db: AsyncSession, email: str):
 
-    stmt = select(User).where(User.email == email, User.is_activate == True)
+    stmt = select(User).where(User.email == email, User.is_active == True)
 
     user = await db.execute(stmt)
 
