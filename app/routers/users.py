@@ -5,7 +5,6 @@ from app.models import User
 from app.schemas import UserInfo, UserProfileResponse, UserProfileUpdate
 from app.security import get_current_user
 
-
 router = APIRouter(prefix="/user", tags=["User"])
 
 
@@ -13,6 +12,7 @@ router = APIRouter(prefix="/user", tags=["User"])
 async def get_current_userinfo(current_user: User = Depends(get_current_user)
 ):
   '''현재 유저정보 반환'''
+  
   
   return current_user  
 
@@ -28,9 +28,11 @@ async def get_profile(
         "name": current_user.name,
         "email": current_user.email,
         "phone": current_user.phone,
-        "address": current_user.address,  # 추가!
+        "address": current_user.address,
         "birth_date": current_user.birth_date,
         "gender": current_user.gender,
+        "address": current_user.address,
+        "birth_date": current_user.birth_date,
         "created_at": current_user.created_at,
         "last_accessed": current_user.last_accessed
     }
@@ -43,17 +45,21 @@ async def update_profile(
     current_user: User = Depends(get_current_user)
 ):
     """프로필 수정 (이름, 이메일, 연락처, 주소)"""
-    try:
+    try: 
+     
         update_data = profile_update.model_dump(exclude_unset=True)
+
         
         for key, value in update_data.items():
             setattr(current_user, key, value)
+
         
         await db.commit()
         await db.refresh(current_user)
+
         
         return {
-            "name": current_user.name,
+            "name": current_user.name,   
             "email": current_user.email,
             "phone": current_user.phone,
             "address": current_user.address,
@@ -62,7 +68,10 @@ async def update_profile(
             "created_at": current_user.created_at,
             "last_accessed": current_user.last_accessed
         }
+        
     except Exception as e:
+       
+        await db.rollback() 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"프로필 수정 중 오류가 발생했습니다: {str(e)}"
