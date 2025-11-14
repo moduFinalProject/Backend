@@ -50,7 +50,7 @@ async def get_user_by_email(db: AsyncSession, email: str):
 async def get_user_by_provider(db: AsyncSession, provieder: str, provider_id: str):
 
     stmt = select(User).where(
-        User.provider == provieder, User.provider_id == provider_id, User.is_activate == True
+        User.provider == provieder, User.provider_id == provider_id, User.is_active == True
     )
 
     user = await db.execute(stmt)
