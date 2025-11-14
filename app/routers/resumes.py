@@ -18,10 +18,10 @@ from app.models import (
     User,
 )
 from app.models import File as FileModel
-from app.resume_util import get_resume_response
+from app.util.resume_util import get_resume_response
 from app.schemas import ResumeCreate, ResumeListResponse, ResumeResponse, ResumeUpdate
 from app.security import get_current_user
-from app.storage_util import (
+from app.util.storage_util import (
     delete_from_storage,
     generate_presigned_url,
     generate_unique_filename,

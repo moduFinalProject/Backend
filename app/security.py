@@ -7,7 +7,7 @@ import os
 
 from sqlalchemy import select
 from app.database import get_db
-from app.login_logic import get_user_by_id
+from app.util.login_logic import get_user_by_id
 from app.config.settings import settings
 from sqlalchemy.ext.asyncio import AsyncSession
 
