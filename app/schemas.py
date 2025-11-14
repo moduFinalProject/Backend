@@ -382,6 +382,37 @@ class UserInfo(BaseModel):
 
 
 
+class UserProfileResponse(BaseModel):
+    """프로필 조회 응답"""
+    name: str
+    email: str
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    birth_date: Optional[date] = None
+    gender: Optional[str] = None
+    created_at: datetime
+    last_accessed: datetime
+    
+    class Config:
+        from_attributes = True
+
+
+class UserProfileUpdate(BaseModel):
+    """프로필 수정 요청"""
+    name: Optional[str] = Field(None, max_length=50)
+    email: Optional[EmailStr] = Field(None, max_length=100)
+    phone: Optional[str] = Field(None, max_length=20)
+    address: Optional[str] = Field(None, max_length=100)
+    
+    @field_validator('name', 'phone', 'address')
+    @classmethod
+    def strip_strings(cls, v):
+        if isinstance(v, str):
+            return v.strip()
+        return v
+
+
+
 class FeedbackContentCreate(BaseModel):
     
     feedback_devision : str
