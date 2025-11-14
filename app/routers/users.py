@@ -25,17 +25,25 @@ async def get_profile(
     current_user: User = Depends(get_current_user)
 ):
     """현재 로그인한 사용자의 프로필 조회"""
-    return {
-        "name": current_user.name,
-        "email": current_user.email,
-        "phone": current_user.phone,
-        "address": current_user.address,
-        "birth_date": current_user.birth_date,
-        "gender": current_user.gender,
-        "created_at": current_user.created_at,
-        "last_accessed": current_user.last_accessed
-    }
-
+    try:
+        return {
+            "name": current_user.name,
+            "email": current_user.email,
+            "phone": getattr(current_user, 'phone', None),
+            "address": getattr(current_user, 'address', None),
+            "birth_date": getattr(current_user, 'birth_date', None),
+            "gender": getattr(current_user, 'gender', None),
+            "created_at": current_user.created_at,
+            "last_accessed": getattr(current_user, 'last_accessed', None)
+        }
+    except Exception as e:
+        print(f"[ERROR] 프로필 조회 실패: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"프로필 조회 실패: {str(e)}"
+        )
 
 @router.put("/profile", response_model=UserProfileResponse)
 async def update_profile(
