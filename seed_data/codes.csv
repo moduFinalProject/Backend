@@ -31,9 +31,9 @@ code_id,detail_id,division,code_detail
 7,3,file_type,문서
 7,4,file_type,동영상
 7,5,file_type,기타
-8,1,feedback_division,필수
-8,2,feedback_division,권장
-8,3,feedback_division,제안
+8,1,feedback_division,잘된 부분
+8,2,feedback_division,개선 제안
+8,3,feedback_division,추가 권장사항
 9,1,interview_feedback,잘된 부분
 9,2,interview_feedback,개선 제안
 9,3,interview_feedback,추가 권장사항
