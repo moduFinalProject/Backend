@@ -229,6 +229,8 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
 
             print(f"[DEBUG] 사용자 정보 응답 status: {user_info_response.status_code}")
             print(f"[DEBUG] 사용자 정보 응답 body: {user_info_response.text}")
+    
+            
 
             if user_info_response.status_code != 200:
                 raise HTTPException(
@@ -239,16 +241,25 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
             user_info = user_info_response.json()
             print(f"[DEBUG] user_info: {user_info}")
 
+
+
+        
+
         # 5. DB 조회
         user = await get_user_by_provider(db, "google", user_info["id"])
-        print(f"[DEBUG] get_user_by_provider 결과: {user}")
 
+        if user:
+            # 비활성화된 계정 체크
+            if not user.is_active:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="탈퇴한 계정입니다. 재가입이 필요합니다."
+                )
+        
         if not user:
             user = await get_user_by_email(db, user_info["email"])
-            print(f"[DEBUG] get_user_by_email 결과: {user}")
 
             if not user:
-                print(f"[DEBUG] 신규 사용자 - is_new_user=True 반환")
                 return {
                     "is_new_user": True,
                     "user": {
