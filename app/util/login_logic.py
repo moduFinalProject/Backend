@@ -26,7 +26,7 @@ async def get_user_by_id(db: AsyncSession, user_id: str):
             (UsertypeCode.division == "user_type")
             & (UsertypeCode.detail_id == User.user_type),
         )
-        .where(User.unique_id == user_id)
+        .where(User.unique_id == user_id, User.is_activate == True)
     )
 
     user = await db.execute(stmt)
@@ -38,7 +38,7 @@ async def get_user_by_id(db: AsyncSession, user_id: str):
 
 async def get_user_by_email(db: AsyncSession, email: str):
 
-    stmt = select(User).where(User.email == email)
+    stmt = select(User).where(User.email == email, User.is_activate == True)
 
     user = await db.execute(stmt)
 
@@ -50,7 +50,7 @@ async def get_user_by_email(db: AsyncSession, email: str):
 async def get_user_by_provider(db: AsyncSession, provieder: str, provider_id: str):
 
     stmt = select(User).where(
-        User.provider == provieder, User.provider_id == provider_id
+        User.provider == provieder, User.provider_id == provider_id, User.is_activate == True
     )
 
     user = await db.execute(stmt)
@@ -75,6 +75,7 @@ async def create_user(
     provider_id: Optional[str] = None,
     phone: Optional[str] = None,
     user_type: Optional[str] = None,
+    military_service: Optional[str] = None
 ):
     unique_id = generate_unique_user_id()
 
@@ -89,6 +90,7 @@ async def create_user(
         provider_id=provider_id,
         phone=phone,
         user_type=user_type,
+        military_service = military_service
     )
 
     db.add(new_user)
@@ -98,10 +100,10 @@ async def create_user(
     return new_user
 
 
-async def update_login(db: AsyncSession, user_id: str):
-    user = await get_user_by_id(db, user_id)
+# async def update_login(db: AsyncSession, user_id: str):
+#     user = await get_user_by_id(db, user_id)
 
-    if user:
-        user.last_accessed = datetime.utcnow()
-        await db.commit()
-    return None
+#     if user:
+#         user.last_accessed = datetime.utcnow()
+#         await db.commit()
+#     return None

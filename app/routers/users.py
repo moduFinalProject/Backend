@@ -3,6 +3,7 @@ from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models import JobPosting, Resume, User
+from app.models import User, JobPosting, Resume
 from app.schemas import UserInfo, UserProfileResponse, UserProfileUpdate
 from app.security import get_current_user
 
@@ -25,8 +26,8 @@ async def get_profile(
     current_user: User = Depends(get_current_user)
 ):
     """현재 로그인한 사용자의 프로필 조회"""
+
     try:
-    
         return {
             "name": current_user.name,
             "email": current_user.email,
@@ -47,6 +48,9 @@ async def get_profile(
         )
     
     
+
+
+
 @router.put("/profile", response_model=UserProfileResponse)
 async def update_profile(
     profile_update: UserProfileUpdate,
