@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config.settings import settings
 from app.database import get_db
-from app.login_logic import create_user, get_user_by_email, get_user_by_provider
+from app.util.login_logic import create_user, get_user_by_email, get_user_by_provider
 from app.security import create_access_token
 from app.schemas import AuthCode, UserCreate
 
@@ -293,6 +293,7 @@ async def signup(data: UserCreate, db: AsyncSession = Depends(get_db)):
         provider_id=data.provider_id,
         phone=data.phone,
         user_type=data.user_type,
+        military_service = data.military_service
     )
 
     jwt_token = create_access_token(data={"sub": user.unique_id})

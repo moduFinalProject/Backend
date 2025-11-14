@@ -38,6 +38,7 @@ class User(Base):
     )
     last_accessed = Column(TIMESTAMP(timezone=True))
     gender = Column(VARCHAR(10), nullable=False)
+    military_service = Column(VARCHAR(10))
     is_sanctions = Column(Boolean, default=False)
 
     # UserBlacklist relationships (다중 외래키)

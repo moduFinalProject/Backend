@@ -38,6 +38,7 @@ class UserCreate(BaseModel):
     provider_id : Optional[str] = Field(None, max_length=50)
     phone : Optional[str] = Field(None, max_length=20)
     user_type : str = "1"
+    military_service : str
 
     @field_validator('email', 'name', 'address', 'gender', 'provider', 'provider_id', 'phone')
     @classmethod
@@ -378,4 +379,19 @@ class UserInfo(BaseModel):
     address : str
     
     model_config = ConfigDict(from_attributes=True)
+
+
+
+class FeedbackContentCreate(BaseModel):
+    
+    feedback_devision : str
+    feedback_result : str
+
+
+
+class ResumeFeedbackCreate(BaseModel):
+    
+    parent_content : str
+    matching_rate : int = Field(max_digits=100)
+    feedback : List[FeedbackContentCreate]
     

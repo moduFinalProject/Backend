@@ -21,5 +21,11 @@ class BaseConfig(BaseSettings):
     
     url_expire_minute : int = 300
     
+    
+    ai_model: str = "gpt-4o-mini"
+    temperature : float = 0.7
+    
+    
+    
     class Config:
         env_file_encoding = "utf-8"
