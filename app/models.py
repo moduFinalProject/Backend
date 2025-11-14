@@ -28,6 +28,7 @@ class User(Base):
     provider = Column(VARCHAR(50))
     provider_id = Column(VARCHAR(50))
     user_type = Column(VARCHAR(10), default="1")
+    is_activate = Column(Boolean, default=True)
     is_active = Column(Boolean, default=True)
     deleted_at = Column(TIMESTAMP(timezone=True))
     created_at = Column(
@@ -165,7 +166,7 @@ class JobPosting(Base):
     end_date = Column(Date)
     memo = Column(VARCHAR(500))
     is_activate = Column(Boolean, default=True)
-
+    
     user = relationship("User", back_populates="job_postings")
 
     resumes = relationship("Resume", back_populates="job_posting")
