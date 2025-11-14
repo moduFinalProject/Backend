@@ -390,8 +390,6 @@ class UserProfileResponse(BaseModel):
     address: Optional[str] = None
     birth_date: Optional[date] = None
     gender: Optional[str] = None
-
-
     created_at: datetime
     last_accessed: datetime
     
@@ -405,10 +403,6 @@ class UserProfileUpdate(BaseModel):
     email: Optional[EmailStr] = Field(None, max_length=100)
     phone: Optional[str] = Field(None, max_length=20)
     address: Optional[str] = Field(None, max_length=100)
-  
-    
-
-
 
     @field_validator('name', 'phone', 'address')
     @classmethod
@@ -432,4 +426,3 @@ class ResumeFeedbackCreate(BaseModel):
     parent_content : str
     matching_rate : int = Field(max_digits=100)
     feedback : List[FeedbackContentCreate]
-
