@@ -253,7 +253,7 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
 
         if user:
             # 비활성화된 계정 체크
-            if not user.is_active:
+            if not user.is_activate:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="탈퇴한 계정입니다. 재가입이 필요합니다."
