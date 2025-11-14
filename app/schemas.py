@@ -377,6 +377,7 @@ class UserInfo(BaseModel):
     phone : str
     birth_date: date 
     address : str
+    military_service : str
     
     model_config = ConfigDict(from_attributes=True)
 
