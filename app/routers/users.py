@@ -100,18 +100,18 @@ async def delete_account(
     try:
         user_id = current_user.user_id
 
-        current_user.is_active = False
+        current_user.is_activate = False
 
         await db.execute(
             update(JobPosting)
             .where(JobPosting.user_id == user_id)
-            .values(is_active=False)
+            .values(is_activate=False)
         )
 
         await db.execute(
             update(Resume)
             .where(Resume.user_id == user_id)
-            .values(is_active=False)
+            .values(is_activate=False)
         )
 
 

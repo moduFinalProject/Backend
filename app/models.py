@@ -28,7 +28,7 @@ class User(Base):
     provider = Column(VARCHAR(50))
     provider_id = Column(VARCHAR(50))
     user_type = Column(VARCHAR(10), default="1")
-    is_active = Column(Boolean, default=True)
+    is_activate = Column(Boolean, default=True)
     deleted_at = Column(TIMESTAMP(timezone=True))
     created_at = Column(
         TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
@@ -192,7 +192,7 @@ class Resume(Base):
     )
     title = Column(VARCHAR(30), nullable=False)
     resume_type = Column(VARCHAR(10), nullable=False)
-    is_active = Column(Boolean, default=True)
+    is_activate = Column(Boolean, default=True)
     deleted_at = Column(TIMESTAMP(timezone=True))
     created_at = Column(
         TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
