@@ -279,7 +279,9 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
         jwt_token = create_access_token(data={"sub": user.unique_id})
         print(f"[DEBUG] JWT 토큰 생성 완료")
         
-        user.last_accessed = datetime.utcnow()
+        user.last_accessed = datetime.now(timezone.utc)
+        await db.commit()
+        await db.refresh(user)
 
         return {
             "access_token": jwt_token,
