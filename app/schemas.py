@@ -392,7 +392,7 @@ class UserProfileResponse(BaseModel):
     birth_date: Optional[date] = None
     gender: Optional[str] = None
     created_at: datetime
-    last_accessed: datetime
+    last_accessed: Optional[datetime] = None
     
     class Config:
         from_attributes = True
