@@ -36,6 +36,7 @@ async def get_profile(
             "birth_date": getattr(current_user, 'birth_date', None),
             "gender": getattr(current_user, 'gender', None),
             "created_at": current_user.created_at,
+            "last_accessed": getattr(current_user, 'last_accessed', None)
         }
     except Exception as e:
        
