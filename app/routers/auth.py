@@ -1,3 +1,4 @@
+from datetime import datetime
 import traceback
 from fastapi import APIRouter, Depends, HTTPException, status
 import httpx
@@ -162,6 +163,8 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
         # 6. JWT 생성
         jwt_token = create_access_token(data={"sub": user.unique_id})
         print(f"[DEBUG] JWT 토큰 생성 완료")
+        
+        user.last_accessed = datetime.utcnow()
 
         return {
             "access_token": jwt_token,
@@ -262,6 +265,8 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
         # 6. JWT 생성
         jwt_token = create_access_token(data={"sub": user.unique_id})
         print(f"[DEBUG] JWT 토큰 생성 완료")
+        
+        user.last_accessed = datetime.utcnow()
 
         return {
             "access_token": jwt_token,
@@ -297,7 +302,9 @@ async def signup(data: UserCreate, db: AsyncSession = Depends(get_db)):
     )
 
     jwt_token = create_access_token(data={"sub": user.unique_id})
-
+    
+    user.last_accessed = datetime.utcnow()
+    
     return {
         "access_token": jwt_token,
         "token_type": "bearer",
