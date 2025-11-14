@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import update
 from app.database import get_db
-from app.models import User
+from app.models import User, JobPosting, Resume
 from app.schemas import UserInfo, UserProfileResponse, UserProfileUpdate
 from app.security import get_current_user
 
@@ -74,14 +75,32 @@ async def update_profile(
 
 
 
+
+
 @router.delete("/account", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_account(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """계정 비활성화 (소프트 삭제)"""
+    """계정 및 소유 데이터 비활성화"""
     try:
+        user_id = current_user.user_id
+
         current_user.is_active = False
+
+        await db.execute(
+            update(JobPosting)
+            .where(JobPosting.user_id == user_id)
+            .values(is_active=False)
+        )
+
+        await db.execute(
+            update(Resume)
+            .where(Resume.user_id == user_id)
+            .values(is_active=False)
+        )
+
+
         await db.commit()
 
         return
