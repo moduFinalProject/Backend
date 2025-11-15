@@ -337,7 +337,6 @@ class JobPostingBase(BaseModel):
     qualification: str = Field(..., max_length=300, description="자격 요건")
     prefer: str = Field(..., max_length=300, description="우대 사항")
     end_date: Optional[date] = Field(None, description="공고 마감일")
-    memo: Optional[str] = Field(None, max_length=500, description="메모")
 
 
 class JobPostingCreate(JobPostingBase):
@@ -353,7 +352,6 @@ class JobPostingUpdate(BaseModel):
     qualification: Optional[str] = Field(None, max_length=300, description="자격 요건")
     prefer: Optional[str] = Field(None, max_length=300, description="우대 사항")
     end_date: Optional[date] = Field(None, description="공고 마감일")
-    memo: Optional[str] = Field(None, max_length=500, description="메모")
 
 
 class JobPostingResponse(JobPostingBase):
@@ -425,7 +423,7 @@ class FeedbackContentAI(BaseModel):
 class ResumeFeedbackAI(BaseModel):
     
     parent_content : str = Field(description="이전 이력서 내용 정리(md 형식의 text)")
-    matching_rate : int = Field(max_digits=100, description="이력서와 공고 적합도(매칭률), 단위: 백분위")
+    matching_rate : int = Field(ge=0, le=100, description="이력서와 공고 적합도(매칭률), 단위: 백분위")
     feedback : List[FeedbackContentAI] = Field(description="피드백 리스트")
 
 
