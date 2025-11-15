@@ -36,7 +36,6 @@ pillow>=10.4.0
 email-validator==2.3.0
 
 # LangChain & AI
-langchain==1.0.5
+langchain==0.3.13
 langchain-openai==0.3.11
-langchain-core==1.0.5
-langchain-community==0.3.13
+# langchain-core와 langchain-community는 자동 설치됨
