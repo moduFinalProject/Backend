@@ -1,7 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from app.config import settings
+from app.config.settings import settings
 from app.schemas import ResumeFeedbackAI
 
 
