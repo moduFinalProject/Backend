@@ -1,6 +1,6 @@
 from dataclasses import Field
 from datetime import date, datetime
-from typing import Optional
+from typing import Literal, Optional
 
 import re
 from typing import Annotated, List, Optional
@@ -74,27 +74,27 @@ class UserResponse(BaseModel):
 
 
 
-class UserInfo(BaseModel):
+# class UserModel(BaseModel):
 
-    email : str
-    name: str
-    address: str
-    phone: Optional[str] = None
-    birthdate : date
-    gender : str
-    gender_detail : str
+#     email : str
+#     name: str
+#     address: str
+#     phone: Optional[str] = None
+#     birthdate : date
+#     gender : str
+#     gender_detail : str
     
-    model_config = ConfigDict(from_attributes=True)
+#     model_config = ConfigDict(from_attributes=True)
     
     
 class ExperienceCreate(BaseModel):
-    job_title : str = Field(max_length=20)
-    department: str = Field(max_length=20)
-    position : Optional[str] = Field(None, max_length=20)
-    job_description : Optional[str] = Field(None, max_length=1000)
-    employment_status : bool
-    start_date : date
-    end_date: Optional[date] = None
+    job_title : str = Field(max_length=20, description="직책/직무명")
+    department: str = Field(max_length=20, description="부서명")
+    position : Optional[str] = Field(None, max_length=20, description="직급")
+    job_description : Optional[str] = Field(None, max_length=1000, description="업무 설명")
+    employment_status : bool = Field(description="현재 재직 여부")
+    start_date : date = Field(description="시작일")
+    end_date: Optional[date] = Field(None, description="종료일")
 
     @field_validator('job_title', 'department', 'position', 'job_description')
     @classmethod
@@ -104,12 +104,12 @@ class ExperienceCreate(BaseModel):
         return v
 
 class EducationCreate(BaseModel):
-    organ : str = Field(max_length=20)
-    department : str = Field(max_length=20)
-    degree_level : Optional[str] = Field(None, max_length=10)
-    score : Optional[str] = Field(None, max_length=10)
-    start_date : date
-    end_date: Optional[date] = None
+    organ : str = Field(max_length=20, description="학교/기관명")
+    department : str = Field(max_length=20, description="학과/전공")
+    degree_level : Literal['1','2','3','4','5'] = Field(description="학위 1:고졸, 2:전문학사, 3:학사, 4:석사, 5:박사")
+    score : Optional[str] = Field(None, max_length=10, description="학점/성적")
+    start_date : date = Field(description="입학일")
+    end_date: Optional[date] = Field(None, description="졸업일")
 
     @field_validator('organ', 'department', 'degree_level', 'score')
     @classmethod
@@ -119,9 +119,9 @@ class EducationCreate(BaseModel):
         return v
 
 class ProjectCreate(BaseModel):
-    title : str = Field(max_length=20)
-    start_date : date
-    end_date: Optional[date] = None
+    title : str = Field(max_length=20, description="프로젝트명")
+    start_date : date = Field(description="시작일")
+    end_date: Optional[date] = Field(None, description="종료일")
     description : Optional[str] = Field(None, max_length=500)
 
     @field_validator('title', 'description')
@@ -132,9 +132,9 @@ class ProjectCreate(BaseModel):
         return v
 
 class ActivityCreate(BaseModel):
-    title : str = Field(max_length=20)
-    start_date : date
-    end_date: Optional[date] = None
+    title : str = Field(max_length=20, description="활동명")
+    start_date : date = Field(description="시작일")
+    end_date: Optional[date] = Field(None, description="종료일")
     description : Optional[str] = Field(None, max_length=500)
 
     @field_validator('title', 'description')
@@ -145,10 +145,10 @@ class ActivityCreate(BaseModel):
         return v
     
 class QualificationCreate(BaseModel):
-    title : str = Field(max_length=20)
-    acquisition_date : date
-    score : Optional[str] = Field(None, max_length=10)
-    organ : Optional[str] = Field(None, max_length=20)
+    title : str = Field(max_length=20, description="자격증명")
+    acquisition_date : date = Field(description="취득일")
+    score : Optional[str] = Field(None, max_length=10, description="점수/등급")
+    organ : Optional[str] = Field(None, max_length=20, description="발급 기관")
 
     @field_validator('title', 'score', 'organ')
     @classmethod
@@ -159,7 +159,7 @@ class QualificationCreate(BaseModel):
 
 
 class TechnologyStackCreate(BaseModel):
-    title: str = Field(min_length=1, max_length=20)
+    title: str = Field(min_length=1, max_length=20, description="기술스택명")
 
     @field_validator('title')
     @classmethod
@@ -235,24 +235,24 @@ class TechnologyStackResponse(BaseModel):
 
 # ===== 이력서 스키마 =====
 class ResumeCreate(BaseModel):
-    resume_type : str = Field(max_length=10)
-    title: str = Field(min_length=2, max_length=30)
-    name: TrimmedStr = Field(max_length=50)
-    email: EmailStr = Field(max_length=50)
-    gender: str
-    address: Optional[str] = Field(default=None, max_length=50)
-    phone: TrimmedStr = Field(max_length=50)
-    military_service : Optional[str] = Field(None, max_length=10)
-    birth_date : Optional[date] = None
-    self_introduction: Optional[str] = Field(default=None)
-    technology_stacks: Optional[List[TechnologyStackCreate]] = Field(default_factory=list)
+    resume_type : str = Field(max_length=10, description="이력서 유형")
+    title: str = Field(min_length=2, max_length=30, description="이력서 제목")
+    name: TrimmedStr = Field(max_length=50, description="이름")
+    email: EmailStr = Field(max_length=50, description="이메일")
+    gender: Literal['1','2'] = Field(description="성별, 1: 남자, 2: 여자")
+    address: Optional[str] = Field(default=None, max_length=50, description="주소")
+    phone: TrimmedStr = Field(max_length=50, description="연락처")
+    military_service : Literal['1','2','3','4','5','6'] = Field(description="병역사항, 1: 면제, 2:군필, 3:미필, 4:공익, 5:병역특례, 6:해당없음")
+    birth_date : Optional[date] = Field(None, description="생년월일")
+    self_introduction: Optional[str] = Field(default=None, description="자기소개")
+    technology_stacks: Optional[List[TechnologyStackCreate]] = Field(default_factory=list, description="기술스택 목록")
 
 
-    experiences: Optional[List[ExperienceCreate]] = Field(default_factory=list)
-    educations: Optional[List[EducationCreate]] = Field(default_factory=list)
-    projects: Optional[List[ProjectCreate]] = Field(default_factory=list)
-    activities: Optional[List[ActivityCreate]] = Field(default_factory=list)
-    qualifications: Optional[List[QualificationCreate]] = Field(default_factory=list)
+    experiences: Optional[List[ExperienceCreate]] = Field(default_factory=list, description="경력 목록")
+    educations: Optional[List[EducationCreate]] = Field(default_factory=list, description="학력 목록")
+    projects: Optional[List[ProjectCreate]] = Field(default_factory=list, description="프로젝트 목록")
+    activities: Optional[List[ActivityCreate]] = Field(default_factory=list, description="활동 목록")
+    qualifications: Optional[List[QualificationCreate]] = Field(default_factory=list, description="자격증 목록")
 
     @field_validator('title', 'name', 'gender','address', 'phone', 'military_service', 'self_introduction')
     @classmethod
@@ -415,15 +415,18 @@ class UserProfileUpdate(BaseModel):
 
 
 
-class FeedbackContentCreate(BaseModel):
+class FeedbackContentAI(BaseModel):
     
-    feedback_devision : str
-    feedback_result : str
+    feedback_devision : Literal['1','2','3'] = Field(description="피드백 분류 1:잘된부분, 2:개선 사항, 3: 추가 권장사항")
+    feedback_result : str = Field(description='피드백 내용')
 
 
 
-class ResumeFeedbackCreate(BaseModel):
+class ResumeFeedbackAI(BaseModel):
     
-    parent_content : str
-    matching_rate : int = Field(max_digits=100)
-    feedback : List[FeedbackContentCreate]
+    parent_content : str = Field(description="이전 이력서 내용 정리(md 형식의 text)")
+    matching_rate : int = Field(max_digits=100, description="이력서와 공고 적합도(매칭률), 단위: 백분위")
+    feedback : List[FeedbackContentAI] = Field(description="피드백 리스트")
+
+
+

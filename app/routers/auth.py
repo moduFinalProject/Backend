@@ -176,6 +176,7 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
         }
 
     except Exception as e:
+        await db.rollback()
         print(f"[ERROR] 예외 발생: {str(e)}")
         print(f"[ERROR] 스택 트레이스:\n{traceback.format_exc()}")
         raise HTTPException(
@@ -253,13 +254,6 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
         # 5. DB 조회
         user = await get_user_by_provider(db, "google", user_info["id"])
 
-        if user:
-            # 비활성화된 계정 체크
-            if not user.is_activate:
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="탈퇴한 계정입니다. 재가입이 필요합니다."
-                )
         
         if not user:
             user = await get_user_by_email(db, user_info["email"])
@@ -291,6 +285,7 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
         }
 
     except Exception as e:
+        await db.rollback()
         print(f"[ERROR] 예외 발생: {str(e)}")
         print(f"[ERROR] 스택 트레이스:\n{traceback.format_exc()}")
         raise HTTPException(
@@ -302,26 +297,37 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
 @router.post("/signup")
 async def signup(data: UserCreate, db: AsyncSession = Depends(get_db)):
     """신규 사용자 로그인 엔드포인트"""
-    user = await create_user(
-        db=db,
-        email=data.email,
-        name=data.name,
-        address=data.address,
-        birth_date=data.birth_date,
-        gender=data.gender,
-        provider=data.provider,
-        provider_id=data.provider_id,
-        phone=data.phone,
-        user_type=data.user_type,
-        military_service = data.military_service
-    )
+    
+    try:
+        user = await create_user(
+            db=db,
+            email=data.email,
+            name=data.name,
+            address=data.address,
+            birth_date=data.birth_date,
+            gender=data.gender,
+            provider=data.provider,
+            provider_id=data.provider_id,
+            phone=data.phone,
+            user_type=data.user_type,
+            military_service = data.military_service
+        )
 
-    jwt_token = create_access_token(data={"sub": user.unique_id})
+        jwt_token = create_access_token(data={"sub": user.unique_id})
+        
+        user.last_accessed = datetime.utcnow()
+        
+        await db.commit()
+        
+        return {
+            "access_token": jwt_token,
+            "token_type": "bearer",
+            "user": {"name": user.name, "email": user.email},
+        }
     
-    user.last_accessed = datetime.utcnow()
-    
-    return {
-        "access_token": jwt_token,
-        "token_type": "bearer",
-        "user": {"name": user.name, "email": user.email},
-    }
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"에러 상세: {str(e)}",
+        )
