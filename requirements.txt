@@ -38,5 +38,5 @@ email-validator==2.3.0
 # LangChain & AI
 langchain==1.0.5
 langchain-openai==0.3.11
-langchain-core==1.1.9
+langchain-core==1.0.5
 langchain-community==1.1.9
