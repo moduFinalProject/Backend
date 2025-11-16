@@ -538,3 +538,4 @@ async def deactivate_resume(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="이력서 삭제에 실패 했습니다.",
         )
+
