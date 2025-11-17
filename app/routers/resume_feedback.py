@@ -310,9 +310,9 @@ async def get_resumefeedback_list(
     current_user: User = Depends(get_current_user),
 ):
     """이력서 리스트를 가져오는 엔드포인트"""
-    
+
     try:
-    
+
         offset = (page - 1) * page_size
 
         data_stmt = (
@@ -324,7 +324,8 @@ async def get_resumefeedback_list(
                 ResumeFeedback.feedback_id,
             )
             .outerjoin(
-                FeedbackContent, (FeedbackContent.feedback_id == ResumeFeedback.feedback_id)
+                FeedbackContent,
+                (FeedbackContent.feedback_id == ResumeFeedback.feedback_id),
             )
             .outerjoin(
                 JobPosting,
@@ -333,7 +334,8 @@ async def get_resumefeedback_list(
             )
             .outerjoin(
                 Resume,
-                (Resume.resume_id == ResumeFeedback.resume_id) & (Resume.is_active == True),
+                (Resume.resume_id == ResumeFeedback.resume_id)
+                & (Resume.is_active == True),
             )
             .where(ResumeFeedback.user_id == current_user.user_id)
             .group_by(
@@ -358,8 +360,7 @@ async def get_resumefeedback_list(
             )
             for row in result
         ]
-        
-        
+
     except Exception as e:
         logger.error(f"error: {e}")
         raise HTTPException(
@@ -374,10 +375,10 @@ async def get_resumefeedback(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    '''피드백 상세를 조회하는 엔드포인트'''
-    
+    """피드백 상세를 조회하는 엔드포인트"""
+
     feedback = await get_resume_feedback(db=db, feedback_id=feedback_id)
-    
+
     if feedback is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -388,5 +389,39 @@ async def get_resumefeedback(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="잘못된 접근입니다."
         )
+
+    return feedback
+
+
+@router.delete("/{feedback_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_feedback(
+    feedback_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    '''피드백 삭제 엔드 포인트'''
     
-    return feedback   
+    try:
+        feedback = await db.get(ResumeFeedback, feedback_id)
+        
+        if feedback is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="존재하지 않는 피드백입니다.",
+            )
+
+        if feedback.user_id != current_user.user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="잘못된 접근입니다."
+            )
+        
+        await db.delete(feedback)
+        
+        await db.commit()
+
+    except Exception as e:
+        logger.error(f"error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="피드백 삭제에 실패했습니다.",
+        )
