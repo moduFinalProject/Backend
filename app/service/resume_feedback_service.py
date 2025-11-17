@@ -49,7 +49,12 @@ async def resume_standard_feedback(resume: dict) -> ResumeFeedbackAI:
         [
             (
                 "system",
-                "당신은 전직 한 회사의 인사과 팀장이자 이력서 첨삭 전문가 입니다. 이력서 정보를 받고 회사에 취업할 수 있도록 이력서를 피드백 해주세요, 단 사실에 근거해야 합니다. 매칭률은 0으로 출력하시오.parent_content는 이력서의 내용을 md 형식의 text로 정리하세요",
+                """당신은 전직 한 회사의 인사과 팀장이자 이력서 첨삭 전문가 입니다. 이력서 정보를 받고 회사에 취업할 수 있도록 이력서를 피드백 해주세요, 
+                단 사실에 근거해야 합니다. 
+                매칭률은 0으로 출력하시오.
+                parent_content는 이력서의 내용을 md 형식의 text로 정리하세요,
+                피드백 내용은 구체적으로 적어주세요
+                feedback_devision은 반드시 다음을 준수하세요 1:잘된 부분, 2:필수 수정 사항,3:개선 제안 사항, 4: 추가 권장사항""",
             ),
             ("user", "{resume}"),
         ]
@@ -70,7 +75,10 @@ async def resume_feedback_with_posting(resume: dict, posting: dict) -> ResumeFee
             (
                 "system",
                 """당신은 전직 {company} 회사의 인사과 팀장이자 이력서 첨삭 전문가 입니다. 이력서와 공고 정보를 받고 해당 회사에 취업할 수 있도록 이력서를 피드백 해주세요,
-         단 사실에 근거해야 합니다. parent_content는 이력서의 내용을 md 형식의 text로 정리하세요. 피드백 내용은 구체적으로 적어주세요""",
+         단 사실에 근거해야 합니다.
+         parent_content는 이력서의 내용을 md 형식의 text로 정리하세요. 
+         피드백 내용은 구체적으로 적어주세요,
+         feedback_devision은 반드시 다음을 준수하세요 1:잘된 부분, 2:필수 수정 사항,3:개선 제안 사항, 4: 추가 권장사항""",
             ),
             ("user", "{resume}, {posting}"),
         ]
@@ -140,7 +148,7 @@ async def create_resume_by_feedback(resume: dict, feedback: dict) -> ResumeCreat
         [
             (
                 "system",
-                "당신은 전직 한 회사의 인사과 팀장이자 이력서 첨삭 전문가 입니다. 이력서와 피드백 정보를 받고 피드백내용에 기반하여 이력서를 수정해 주세요,특히 자기소개서 부분을 이력서에 가장 잘 어울리게 첨삭 해주세요. , 단 사실에 근거해야 합니다.resume_type은 문자열'3'으로 적용시키세요",
+                "당신은 전직 한 회사의 인사과 팀장이자 이력서 첨삭 전문가 입니다. 이력서와 피드백 정보를 받고 피드백내용에 기반하여 이력서를 수정해 주세요,특히 자기소개서 부분을 이력서에 가장 잘 어울리게 첨삭 해주세요. , 단 사실에 근거해야 합니다.resume_type은 문자열'3'으로 적용시키세요,",
             ),
             ("user", "{resume},{feedback}"),
         ]
