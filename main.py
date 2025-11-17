@@ -3,7 +3,7 @@ from app.config.settings import settings
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth
 from app.routers import job_postings
-from app.routers import auth, job_postings, resumes, users, resume_feedback, dashboard
+from app.routers import auth, job_postings, resumes, users, resume_feedback
 
 
 
@@ -29,7 +29,6 @@ app.include_router(job_postings.router)
 app.include_router(resumes.router)
 app.include_router(users.router)
 app.include_router(resume_feedback.router)
-app.include_router(dashboard.router)
 
 
 # @app.get("/healthy")
