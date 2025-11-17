@@ -93,7 +93,7 @@ async def get_all_resumes(
             "created_at": resume.created_at,
             "resume_type": resume.resume_type,
             "resume_type_detail": resume_type_detail,
-            "is_activate": resume.is_activate,
+            "is_activate": resume.is_active,
         })
     return resumes
 
