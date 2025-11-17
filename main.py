@@ -3,7 +3,7 @@ from app.config.settings import settings
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth
 from app.routers import job_postings
-from app.routers import auth, job_postings, resumes, users, resume_feedback
+from app.routers import auth, job_postings, resumes, users, resume_feedback, dashboard
 
 
 app = FastAPI(title="AI 구인구직 플랫폼")
@@ -39,3 +39,4 @@ app.include_router(job_postings.router)
 app.include_router(resumes.router)
 app.include_router(users.router)
 app.include_router(resume_feedback.router)
+app.include_router(dashboard.router)

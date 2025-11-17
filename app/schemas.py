@@ -421,10 +421,41 @@ class FeedbackContentAI(BaseModel):
 
 
 class ResumeFeedbackAI(BaseModel):
-    
+
     parent_content : str = Field(description="이전 이력서 내용 정리(md 형식의 text)")
     matching_rate : int = Field(ge=0, le=100, description="이력서와 공고 적합도(매칭률), 단위: 백분위")
     feedback : List[FeedbackContentAI] = Field(description="피드백 리스트")
 
+
+# ===== Dashboard 스키마 =====
+class DashboardResumeItem(BaseModel):
+    """대시보드 최근 이력서 정보"""
+    resume_id: int
+    title: str
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class DashboardActivityItem(BaseModel):
+    """대시보드 활동 로그 정보"""
+    action_type: str
+    description: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class DashboardResponse(BaseModel):
+    """대시보드 전체 응답"""
+    total_resumes: int
+    this_week_resumes: int
+    this_week_ai_feedback: int
+    total_job_postings: int
+    this_week_job_postings: int
+    recent_resumes: List[DashboardResumeItem]
+    recent_activities: List[DashboardActivityItem]
+
+    model_config = ConfigDict(from_attributes=True)
 
 
