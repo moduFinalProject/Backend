@@ -54,7 +54,7 @@ async def get_resume_response(db: AsyncSession, resume_id: int):
             contains_eager(Resume.technology_stacks),
             contains_eager(Resume.qualifications),
         )
-        .where(and_(Resume.resume_id == resume_id, Resume.is_activate == True))
+        .where(and_(Resume.resume_id == resume_id, Resume.is_active == True))
     )
     
 
