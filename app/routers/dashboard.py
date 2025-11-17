@@ -29,7 +29,7 @@ async def get_dashboard(
             SELECT resume_id, title, created_at, updated_at
             FROM resumes
             WHERE user_id = :user_id
-              AND is_activate = true
+              AND is_active = true
         ),
         base_feedbacks AS (
             SELECT feedback_id, resume_id, created_at
@@ -40,7 +40,7 @@ async def get_dashboard(
             SELECT posting_id, created_at
             FROM jobpostings
             WHERE user_id = :user_id
-              AND is_activate = true
+              AND is_active = true
         ),
         stats AS (
             SELECT
