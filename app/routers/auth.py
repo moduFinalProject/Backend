@@ -81,7 +81,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/google/localhost")
-async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
+async def auth_google_localhost(code: AuthCode, db: AsyncSession = Depends(get_db)):
     """구글 간편 로그인 엔드포인트"""
     try:
         # 1. 입력값 확인

@@ -39,10 +39,10 @@ async def get_job_postings(
         [
             DBJobPosting.title.ilike(f"%{title}%"),
             DBJobPosting.user_id == user_id,
-            DBJobPosting.is_activate == True,
+            DBJobPosting.is_active == True,
         ]
         if title
-        else [DBJobPosting.user_id == user_id, DBJobPosting.is_activate == True]
+        else [DBJobPosting.user_id == user_id, DBJobPosting.is_active == True]
     )
     result = await db.execute(
         select(DBJobPosting)
@@ -59,7 +59,7 @@ async def get_job_posting(db: AsyncSession, posting_id: int) -> Optional[DBJobPo
 
     result = await db.execute(
         select(DBJobPosting).where(
-            DBJobPosting.posting_id == posting_id, DBJobPosting.is_activate == True
+            DBJobPosting.posting_id == posting_id, DBJobPosting.is_active == True
         )
     )
     return result.scalar_one_or_none()
@@ -88,3 +88,12 @@ async def update_job_posting(
 
 async def delete_job_posting(db: AsyncSession, posting_id: int) -> bool:
     """특정 채용 공고를 삭제합니다."""
+    stmt = (
+        update(DBJobPosting)
+        .where(DBJobPosting.posting_id == posting_id)
+        .values(is_active=False)
+        .execution_options(synchronize_session="fetch")
+    )
+    result = await db.execute(stmt)
+    await db.commit()
+    return result.rowcount > 0

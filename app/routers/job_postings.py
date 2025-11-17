@@ -36,7 +36,10 @@ async def create_job_posting_endpoint(
 
 
 @router.get("/", response_model=List[JobPostingResponse])
-async def read_all_job_postings_endpoint(title : Optional[str] = None,page : int= 1, page_size : int= 6,
+async def read_all_job_postings_endpoint(
+    title: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 6,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -155,8 +158,8 @@ async def delete_job_posting_endpoint(
                 detail="잘못된 접근입니다."
             )
 
-        # 소프트 삭제: is_activate을 False로 설정
-        job_posting.is_activate = False
+        # 소프트 삭제: is_active을 False로 설정
+        job_posting.is_active = False
 
         await db.commit()
 
