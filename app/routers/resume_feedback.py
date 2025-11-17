@@ -330,7 +330,7 @@ async def get_resumefeedback_list(
             .outerjoin(
                 JobPosting,
                 (JobPosting.posting_id == ResumeFeedback.posting_id)
-                & (JobPosting.is_active == "True"),
+                & (JobPosting.is_active == True),
             )
             .outerjoin(
                 Resume,
