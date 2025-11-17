@@ -4,7 +4,7 @@ from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from sqlalchemy import and_, select
 from app.config.settings import settings
-from app.models import (
+from app.models.models import (
     Activity,
     Education,
     Experience,
@@ -17,7 +17,7 @@ from app.models import (
     Code,
     TechnologyStack,
 )
-from app.schemas import (
+from app.schema.schemas import (
     FeedbackContentAI,
     ResumeCreate,
     ResumeFeedbackAI,
@@ -27,8 +27,8 @@ from app.schemas import (
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import contains_eager, joinedload
 
-from app.util.resume_util import get_resume_response
-from app.util.storage_util import copy_image, generate_presigned_url, generate_unique_filename
+from app.service.resume_service import get_resume_response
+from app.storage_util.storage_util import copy_image, generate_presigned_url, generate_unique_filename
 
 
 llm = ChatOpenAI(

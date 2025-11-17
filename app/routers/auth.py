@@ -7,9 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config.settings import settings
 from app.database import get_db
-from app.util.login_logic import create_user, get_user_by_email, get_user_by_provider
+from app.service.login_service import create_user, get_user_by_email, get_user_by_provider
 from app.security import create_access_token
-from app.schemas import AuthCode, UserCreate
+from app.schema.schemas import AuthCode, UserCreate
 
 logger = logging.getLogger(__name__)
 

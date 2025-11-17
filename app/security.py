@@ -7,11 +7,11 @@ import os
 
 from sqlalchemy import select
 from app.database import get_db
-from app.util.login_logic import get_user_by_id
+from app.service.login_service import get_user_by_id
 from app.config.settings import settings
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import User
+from app.models.models import User
 
 SECRET_KEY=settings.jwt_secret
 ALGORITHM=settings.jwt_algorithm

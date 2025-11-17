@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import date, datetime
-from app.models import Code, User
+from app.models.models import Code, User
 from sqlalchemy.orm import aliased
 
 

@@ -1,7 +1,7 @@
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, joinedload, contains_eager
-from app.models import Code, Education, Resume, File
+from app.models.models import Code, Education, Resume, File
 
 
 async def get_resume_response(db: AsyncSession, resume_id: int):

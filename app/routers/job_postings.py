@@ -4,11 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 
 from app.database import get_db
-from app.models import User, JobPosting as DBJobPosting
-from app.schemas import JobPostingResponse, JobPostingCreate, JobPostingUpdate
+from app.models.models import User, JobPosting as DBJobPosting
+from app.schema.schemas import JobPostingResponse, JobPostingCreate, JobPostingUpdate
 from app.security import get_current_user
 
-import app.util.posting_util as crud  # app/job_postings.py 파일 (CRUD 로직)
+import app.service.posting_service as crud  # app/job_postings.py 파일 (CRUD 로직)
 
 
 router = APIRouter(prefix="/job-postings", tags=["Job Postings"])

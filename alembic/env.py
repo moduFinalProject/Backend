@@ -10,7 +10,7 @@ from alembic import context
 
 from app.config.settings import settings
 from app.database import sync_engine, Base
-from app.models import *
+from app.models.models import *
 
 
 # this is the Alembic Config object, which provides
