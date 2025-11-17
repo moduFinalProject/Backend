@@ -56,6 +56,7 @@ async def get_resume_response(db: AsyncSession, resume_id: int):
         )
         .where(and_(Resume.resume_id == resume_id, Resume.is_active == True))
     )
+    
 
     result = await db.execute(stmt)
     row = result.unique().first()
