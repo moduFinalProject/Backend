@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.models import (
+from app.models.models import (
     Activity,
     Education,
     Experience,
@@ -17,7 +17,7 @@ from app.models import (
     TechnologyStack,
     User,
 )
-from app.schemas import (
+from app.schema.schemas import (
     JobPostingCreate,
     JobPostingResponse,
     ResumeCreate,
@@ -27,7 +27,7 @@ from app.schemas import (
     ResumeResponse,
 )
 from app.security import get_current_user
-from app.util.resume_feedback_util import (
+from app.service.resume_feedback_service import (
     create_posting_resume_by_feedback,
     create_resume_by_feedback,
     create_resume_with_feedback,
@@ -35,7 +35,7 @@ from app.util.resume_feedback_util import (
     resume_feedback_with_posting,
     resume_standard_feedback,
 )
-from app.util.resume_util import get_resume_response
+from app.service.resume_service import get_resume_response
 
 logger = logging.getLogger(__name__)
 

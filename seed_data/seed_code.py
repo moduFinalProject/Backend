@@ -1,6 +1,6 @@
 import csv
 from app.database import SessionLocal
-from app.models import Code
+from app.models.models import Code
 
 def seed_codes_from_csv(csv_path: str):
     db = SessionLocal()

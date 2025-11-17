@@ -2,8 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import desc, select, update, delete
 from typing import Optional, List
 
-from app.models import JobPosting as DBJobPosting
-from app.schemas import JobPostingCreate, JobPostingUpdate
+from app.models.models import JobPosting as DBJobPosting
+from app.schema.schemas import JobPostingCreate, JobPostingUpdate
 
 
 async def create_job_posting(
