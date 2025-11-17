@@ -248,7 +248,8 @@ async def create_resume_with_feedback(
         select(File).where(
             and_(File.fileable_id == parent_resume_id, File.purpose == "resume_image")
         )
-    ).scalar_one_or_none()
+    )
+    image_file = image_file.scalar_one_or_none()
 
     if image_file is None:
         raise HTTPException(
