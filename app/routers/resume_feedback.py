@@ -37,6 +37,7 @@ from app.util.resume_util import get_resume_response
 router = APIRouter(prefix="/resume_feedbacks", tags=["Resume_Feedback"])
 
 
+
 @router.post("/stantard/{resume_id}", response_model=ResumeFeedbackResponse)
 async def resume_feedback(
     resume_id: int,
@@ -295,3 +296,4 @@ async def apply_feedback_with_posting(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="이력서 생성에 실패했습니다.",
         )
+
