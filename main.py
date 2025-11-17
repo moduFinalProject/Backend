@@ -1,4 +1,7 @@
-from fastapi import FastAPI
+import logging
+from fastapi import FastAPI, status
+from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 from app.config.settings import settings
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth
@@ -6,6 +9,8 @@ from app.routers import job_postings
 from app.routers import auth, job_postings, resumes, users, resume_feedback, dashboard
 
 
+
+logging.basicConfig(level=logging.INFO, format="%(astime)s - %(name)s - %(levelname)s - %(message)s")
 
 app = FastAPI(
     title=settings.app_name,
@@ -22,6 +27,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.exception_handler(ValidationError)
+def validation_handler(request, exc):
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST, content = {"error_code": "ValidationError", "errors": exc.errors()}
+    )
+
+
 
 
 app.include_router(auth.router)
