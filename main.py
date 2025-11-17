@@ -29,7 +29,6 @@ app.include_router(job_postings.router)
 app.include_router(resumes.router)
 app.include_router(users.router)
 app.include_router(resume_feedback.router)
- 
 
 
 # @app.get("/healthy")
