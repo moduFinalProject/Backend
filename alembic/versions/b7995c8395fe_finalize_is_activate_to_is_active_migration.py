@@ -42,6 +42,17 @@ def upgrade() -> None:
         elif 'is_activate' in columns:
             op.alter_column(table_name, 'is_activate', new_column_name='is_active')
 
+    # Update NULL values to TRUE for is_active column
+    for table_name in tables_to_check:
+        if table_name not in inspector.get_table_names():
+            continue
+
+        columns = {col['name'] for col in inspector.get_columns(table_name)}
+
+        # If is_active exists, update NULL values to TRUE
+        if 'is_active' in columns:
+            op.execute(f"UPDATE {table_name} SET is_active = TRUE WHERE is_active IS NULL")
+
 
 def downgrade() -> None:
     # Get the database connection to check current state
