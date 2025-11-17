@@ -28,7 +28,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import contains_eager, joinedload
 
 from app.service.resume_service import get_resume_response
-from app.storage_util.storage_util import copy_image, generate_presigned_url, generate_unique_filename
+from app.storage_util.storage_util import (
+    copy_image,
+    generate_presigned_url,
+    generate_unique_filename,
+)
 
 
 llm = ChatOpenAI(
@@ -92,7 +96,8 @@ async def get_resume_feedback(
         .where(ResumeFeedback.feedback_id == feedback_id)
     )
 
-    feedback = await db.execute(data_stmt).unique().scalar_one_or_none()
+    feedback = await db.execute(data_stmt)
+    feedback = feedback.unique().scalar_one_or_none()
 
     if feedback is None:
         return None
@@ -174,10 +179,6 @@ async def create_posting_resume_by_feedback(
     return result
 
 
-
-
-
-
 async def create_resume_with_feedback(
     result: ResumeCreate, db: AsyncSession, user_id: int, parent_resume_id: int
 ) -> ResumeResponse:
@@ -237,32 +238,38 @@ async def create_resume_with_feedback(
             and_(File.fileable_id == parent_resume_id, File.purpose == "resume_image")
         )
     ).scalar_one_or_none()
-    
+
     if image_file is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='파일을 찾을 수 없습니다.')
-    
-    new_image = await copy_image(key=image_file.file_key, real_format=image_file.filetype)
-        
-    new_file = File(fileable_id = new_resume.resume_id,
-                    user_id = user_id,
-                    filetype = image_file.filetype,
-                    fileable_table = 'resumes',
-                    org_file_name = image_file.org_file_name,
-                    mod_file_name = new_image.get('new_image_key'),
-                    file_key = new_image.get('unique_filename'),
-                    purpose = "resume_image")
-    
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="파일을 찾을 수 없습니다."
+        )
+
+    new_image = await copy_image(
+        key=image_file.file_key, real_format=image_file.filetype
+    )
+
+    new_file = File(
+        fileable_id=new_resume.resume_id,
+        user_id=user_id,
+        filetype=image_file.filetype,
+        fileable_table="resumes",
+        org_file_name=image_file.org_file_name,
+        mod_file_name=new_image.get("new_image_key"),
+        file_key=new_image.get("unique_filename"),
+        purpose="resume_image",
+    )
+
     db.add(new_file)
-    
+
     await db.commit()
-    
+
     resume_info = await get_resume_response(db=db, resume_id=new_resume.resume_id)
 
     image_key = resume_info.get("image_key") if resume_info else None
     image_url = await generate_presigned_url(image_key) if image_key else None
-    
+
     resume_info["image_url"] = image_url
-    
+
     resume_response = ResumeResponse.model_validate(resume_info).model_dump()
-    
+
     return resume_response
