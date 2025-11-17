@@ -87,6 +87,7 @@ async def get_resume_response(db: AsyncSession, resume_id: int):
     # ResumeResponse 형태의 딕셔너리로 변환
     resume_dict = {
         "resume_id": resume.resume_id,
+        "user_id": resume.user_id ,
         "title": resume.title,
         "name": resume.name,
         "email": resume.email,

@@ -119,7 +119,7 @@ async def resume_feedback_with_jobposting(
 
         if resume.get("user_id") != current_user.user_id:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="잘못된 접근입니다."
+                status_code=status.HTTP_403_FORBIDDEN, detail="잘못된 접근입니다."
             )
 
         posting = await db.get(JobPosting, posting_id)
@@ -195,7 +195,7 @@ async def apply_feedback(
 
         if feedback.user_id != current_user.user_id:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="잘못된 접근입니다."
+                status_code=status.HTTP_403_FORBIDDEN, detail="잘못된 접근입니다."
             )
 
         if resume is None:
@@ -206,7 +206,7 @@ async def apply_feedback(
 
         if resume.get("user_id") != current_user.user_id:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="잘못된 접근입니다."
+                status_code=status.HTTP_403_FORBIDDEN, detail="잘못된 접근입니다."
             )
 
         feedback = feedback.model_dump()
@@ -252,7 +252,7 @@ async def apply_feedback_with_posting(
 
         if feedback.user_id != current_user.user_id:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="잘못된 접근입니다."
+                status_code=status.HTTP_403_FORBIDDEN, detail="잘못된 접근입니다."
             )
 
         if resume is None:
@@ -388,7 +388,7 @@ async def get_resumefeedback(
 
     if feedback.user_id != current_user.user_id:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="잘못된 접근입니다."
+            status_code=status.HTTP_403_FORBIDDEN, detail="잘못된 접근입니다."
         )
 
     return feedback
