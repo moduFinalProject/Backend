@@ -10,7 +10,7 @@ from app.routers import auth, job_postings, resumes, users, resume_feedback, das
 
 
 
-logging.basicConfig(level=logging.INFO, format="%(astime)s - %(name)s - %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 app = FastAPI(
     title=settings.app_name,
