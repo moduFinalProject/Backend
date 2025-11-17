@@ -416,7 +416,7 @@ class UserProfileUpdate(BaseModel):
 class FeedbackContentAI(BaseModel):
     
     feedback_devision : Literal['1','2','3'] = Field(description="피드백 분류 1:잘된 부분, 2:필수 수정 사항,3:개선 제안 사항, 4: 추가 권장사항")
-    feedback_result : List[str] = Field(description='피드백 내용, 피드백 분류별로 리스트로 묶어서 출력하세요')
+    feedback_result : str = Field(description='피드백 내용')
     
     model_config = ConfigDict(from_attributes=True)
     
@@ -463,7 +463,7 @@ class DashboardResponse(BaseModel):
 class FeedbackContentResponse(BaseModel):
     
     feedback_devision : str
-    feedback_result : List[str]
+    feedback_result : str
     feedback_devision_detail: str
     
     model_config = ConfigDict(from_attributes=True)

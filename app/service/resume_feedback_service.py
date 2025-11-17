@@ -101,6 +101,8 @@ async def get_resume_feedback(
 
     if feedback is None:
         return None
+    
+    
 
     feedback_divisions = [
         content.feedback_devision
@@ -124,6 +126,7 @@ async def get_resume_feedback(
         content.feedback_devision_detail = feedback_code_map.get(
             content.feedback_devision
         )
+    
 
     result = ResumeFeedbackResponse.from_orm(feedback)
 
