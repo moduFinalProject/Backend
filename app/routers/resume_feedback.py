@@ -7,7 +7,7 @@ from app.util.ai import resume_feedback_with_posting, resume_standard_feedback
 router = APIRouter(prefix="/resume_feedbacks", tags=["Resume_Feedback"])
 
 
-@router.post('/stantard', response_model=ResumeFeedbackAI)
+@router.post('/standard', response_model=ResumeFeedbackAI)
 async def resume_feedback(resume:ResumeCreate):
     
     resume = resume.model_dump()
