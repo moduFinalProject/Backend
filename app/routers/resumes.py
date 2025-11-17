@@ -2,6 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 from datetime import datetime
 import json
+import logging
+import traceback
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from sqlalchemy import and_, delete, desc, update, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,6 +31,7 @@ from app.util.storage_util import (
     validate_image_file,
 )
 
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/resumes", tags=["Resumes"])
 
@@ -131,7 +134,7 @@ async def get_resume(
         return db_resume
 
     except Exception as e:
-        print(f"error : {str(e)}")
+        logger.error(f"error : {str(e)}")
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -255,13 +258,7 @@ async def create_resumes(
     """일반 이력서 생성 (디버깅 버전)"""
 
     try:
-        print(f"[DEBUG] 요청된 사용자 ID: {current_user.user_id}")
-        print(f"[DEBUG] 받은 데이터: {data}")
-
         resume_data = ResumeCreate(**json.loads(data))
-        print(f"[DEBUG] ResumeCreate 파싱 완료")
-        print(f"[DEBUG] technology_stacks: {resume_data.technology_stacks}")
-        print(f"[DEBUG] technology_stacks 타입: {type(resume_data.technology_stacks)}")
 
         new_resume = Resume(
             user_id=current_user.user_id,
@@ -279,12 +276,7 @@ async def create_resumes(
         db.add(new_resume)
         await db.flush()
         await db.refresh(new_resume)
-        print(f"[DEBUG] Resume 생성 완료. resume_id: {new_resume.resume_id}")
-
-        print(f"[DEBUG] technology_stacks 루프 시작")
         for idx, technology_stack in enumerate(resume_data.technology_stacks):
-            print(f"[DEBUG] [{idx}] technology_stack: {technology_stack}")
-            print(f"[DEBUG] [{idx}] technology_stack 타입: {type(technology_stack)}")
             new_tech = TechnologyStack(
                 resume_id=new_resume.resume_id, title=technology_stack.title
             )
@@ -337,29 +329,21 @@ async def create_resumes(
             )
             db.add(new_image_file)
         await db.commit()
-        print(f"[DEBUG] DB 커밋 완료")
+        await db.commit()
 
         resume_info = await get_resume_response(db=db, resume_id=new_resume.resume_id)
-        print(f"[DEBUG] get_resume_response 호출 완료")
 
         image_key = resume_info.get("image_key") if resume_info else None
         image_url = await generate_presigned_url(image_key) if image_key else None
-        print(f"[DEBUG] presigned_url 생성 완료: {image_url}")
 
         resume_info["image_url"] = image_url
 
         resume_response = ResumeResponse.model_validate(resume_info).model_dump()
-        print(f"[DEBUG] 최종 응답 준비 완료")
 
         return resume_response
 
     except Exception as e:
-        print(f"[ERROR] 예상치 못한 오류 발생")
-        print(f"[ERROR] 에러 타입: {type(e).__name__}")
-        print(f"[ERROR] 에러 메시지: {str(e)}")
-        import traceback
-
-        print(f"[ERROR] 스택 트레이스:\n{traceback.format_exc()}")
+        logger.error(f"예상치 못한 오류 발생: {str(e)}")
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -497,7 +481,7 @@ async def update_resume(
         return resume_response
 
     except Exception as e:
-        print(f"error : {str(e)}")
+        logger.error(f"error : {str(e)}")
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -532,7 +516,7 @@ async def deactivate_resume(
         await db.commit()
 
     except Exception as e:
-        print(f"error : {str(e)}")
+        logger.error(f"error : {str(e)}")
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

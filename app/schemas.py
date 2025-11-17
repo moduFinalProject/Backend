@@ -445,3 +445,14 @@ class ResumeFeedbackResponse(BaseModel):
     feedback_contents : List[FeedbackContentResponse]
     
     model_config = ConfigDict(from_attributes=True)
+
+
+
+class ResumeFeedbackListResponse(BaseModel):
+    
+    company: str
+    resume_title : str
+    content_count: int
+    matching_rate : int
+    
+    model_config = ConfigDict(from_attributes=True)
