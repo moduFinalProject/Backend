@@ -56,7 +56,7 @@ async def get_all_resumes(
                 & (Code.detail_id == Resume.resume_type),
             )
             .where(
-                and_(Resume.user_id == current_user.user_id, Resume.is_activate == True)
+                and_(Resume.user_id == current_user.user_id, Resume.is_active == True)
             )
             .order_by(desc(Resume.created_at))
             .offset(offset)
@@ -93,7 +93,7 @@ async def get_all_resumes(
             "created_at": resume.created_at,
             "resume_type": resume.resume_type,
             "resume_type_detail": resume_type_detail,
-            "is_activate": resume.is_active,
+            "is_active": resume.is_active,
         })
     return resumes
 
