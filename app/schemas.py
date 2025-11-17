@@ -55,7 +55,7 @@ class AuthCode(BaseModel):
     
 
 class UserResponse(BaseModel):
-    uniqe_id : str
+    unique_id : str
     email : str
     name: str
     address: str
@@ -417,17 +417,18 @@ class FeedbackContentAI(BaseModel):
     
     feedback_devision : Literal['1','2','3'] = Field(description="피드백 분류 1:잘된부분, 2:개선 사항, 3: 추가 권장사항")
     feedback_result : str = Field(description='피드백 내용')
-
-
-
+    
+    model_config = ConfigDict(from_attributes=True)
+    
 class ResumeFeedbackAI(BaseModel):
 
     parent_content : str = Field(description="이전 이력서 내용 정리(md 형식의 text)")
     matching_rate : int = Field(ge=0, le=100, description="이력서와 공고 적합도(매칭률), 단위: 백분위")
-    feedback : List[FeedbackContentAI] = Field(description="피드백 리스트")
+    feedback_contents : List[FeedbackContentAI] = Field(description="피드백 리스트")
+    
+    model_config = ConfigDict(from_attributes=True)
 
 
-# ===== Dashboard 스키마 =====
 class DashboardResumeItem(BaseModel):
     """대시보드 최근 이력서 정보"""
     resume_id: int
@@ -459,3 +460,19 @@ class DashboardResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class FeedbackContentResponse(BaseModel):
+    
+    feedback_devision : str
+    feedback_result : str
+    feedback_devision_detail: str
+    
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ResumeFeedbackResponse(BaseModel):
+    
+    parent_content : str
+    matching_rate : int
+    feedback_contents : List[FeedbackContentResponse]
+    
+    model_config = ConfigDict(from_attributes=True)

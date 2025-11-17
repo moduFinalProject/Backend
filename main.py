@@ -6,13 +6,6 @@ from app.routers import job_postings
 from app.routers import auth, job_postings, resumes, users, resume_feedback, dashboard
 
 
-app = FastAPI(title="AI 구인구직 플랫폼")
-
-@app.get("/healthy")
-def health_check():
-    return {"hello": "world"}
-
-
 
 app = FastAPI(
     title=settings.app_name,
@@ -31,12 +24,14 @@ app.add_middleware(
 )
 
 
-
-
-
 app.include_router(auth.router)
 app.include_router(job_postings.router)
 app.include_router(resumes.router)
 app.include_router(users.router)
 app.include_router(resume_feedback.router)
 app.include_router(dashboard.router)
+
+
+# @app.get("/healthy")
+# def health_check():
+#     return {"hello": "world"}
