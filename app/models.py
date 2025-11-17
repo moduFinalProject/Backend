@@ -163,8 +163,8 @@ class JobPosting(Base):
         TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
     end_date = Column(Date)
-    is_activate = Column(Boolean, default=True)
-    
+    is_active = Column(Boolean, default=True)
+
     user = relationship("User", back_populates="job_postings")
 
     resumes = relationship("Resume", back_populates="job_posting")
@@ -191,7 +191,7 @@ class Resume(Base):
     )
     title = Column(VARCHAR(30), nullable=False)
     resume_type = Column(VARCHAR(10), nullable=False)
-    is_activate = Column(Boolean, default=True)
+    is_active = Column(Boolean, default=True)
     deleted_at = Column(TIMESTAMP(timezone=True))
     created_at = Column(
         TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc)

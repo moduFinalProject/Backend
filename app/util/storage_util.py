@@ -11,7 +11,7 @@ s3_client = boto3.client(
     "s3",
     aws_access_key_id=settings.aws_access_key_id,
     aws_secret_access_key=settings.aws_secret_access_key,
-    # endpoint_url=settings.aws_endpoint_url,
+    endpoint_url=settings.aws_endpoint_url,
     region_name=settings.aws_region,
 )
 
@@ -89,3 +89,19 @@ async def generate_presigned_url(
     )
 
     return url
+
+
+
+async def copy_image(key: str, real_format:str)->dict:
+    '''스토리지에 이미지를 복사하는 엔드포인트'''
+    
+    unique_filename = generate_unique_filename(real_format=real_format)
+    new_image_key = f"{settings.image}/{unique_filename}"
+    
+    s3_client.copy_object(
+        Bucket = settings.aws_bucket_name,
+        CopySource = {'Bucket': settings.aws_bucket_name, "Key": key},
+        Key = new_image_key
+    )
+    
+    return {"new_image_key":new_image_key, "unique_filename": unique_filename}
