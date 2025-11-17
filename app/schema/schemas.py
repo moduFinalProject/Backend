@@ -471,6 +471,7 @@ class FeedbackContentResponse(BaseModel):
 
 class ResumeFeedbackResponse(BaseModel):
     
+    feedback_id :int
     parent_content : str
     matching_rate : int
     feedback_contents : List[FeedbackContentResponse]

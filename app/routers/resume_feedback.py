@@ -353,6 +353,7 @@ async def get_resumefeedback_list(
 
         return [
             ResumeFeedbackListResponse(
+                feedback_id = row.feedback_id,
                 company=row.company,
                 resume_title=row.title,
                 content_count=row.content_count,
