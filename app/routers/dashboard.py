@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-import json
 
 from app.database import get_db
 from app.models import User
@@ -83,8 +82,8 @@ async def get_dashboard(
                 detail="대시보드 데이터 조회 실패",
             )
 
-        # JSON 결과 파싱
-        data = json.loads(row.result)
+        # JSON 결과 파싱 (이미 dict 형태로 자동 변환됨)
+        data = row.result
         stats = data.get("stats", {})
         recent_resumes = data.get("recent_resumes", [])
         recent_activities = data.get("recent_activities", [])
