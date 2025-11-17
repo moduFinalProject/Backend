@@ -471,6 +471,7 @@ class FeedbackContentResponse(BaseModel):
 
 class ResumeFeedbackResponse(BaseModel):
     
+    user_id :int
     posting_id :int
     resume_id : int
     feedback_id :int
