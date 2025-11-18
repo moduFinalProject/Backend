@@ -726,15 +726,3 @@ result = await chain.ainvoke({"resume": data})
 
 ---
 
-## 참고 자료
-
-- **ERD 링크:** [erd.mmd](./erd.mmd)
-- **프로젝트 페이지:** [https://modufinalproject.github.io/frontend](https://modufinalproject.github.io/frontend)
-- **API 문서:** `http://localhost:8000/docs` (로컬 개발)
-- **환경설정:** [.env.example](./.env.example)
-
----
-
-## 라이선스
-
-이 프로젝트는 MIT 라이선스를 따릅니다.
