@@ -52,6 +52,7 @@ async def resume_feedback(
 
     try:
         resume = await get_resume_response(resume_id=resume_id, db=db)
+        
         if resume is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -62,8 +63,11 @@ async def resume_feedback(
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="잘못된 접근입니다."
             )
+            
+        resume_response = ResumeResponse.model_validate(resume)
+        resume_dict = resume_response.model_dump()
 
-        result = await resume_standard_feedback(resume)
+        result = await resume_standard_feedback(resume_dict)
 
         new_feedback = ResumeFeedback(
             resume_id=resume.get("resume_id"),
@@ -121,6 +125,8 @@ async def resume_feedback_with_jobposting(
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN, detail="잘못된 접근입니다."
             )
+        resume_response = ResumeResponse.model_validate(resume)
+        resume_dict = resume_response.model_dump()
 
         posting = await db.get(JobPosting, posting_id)
 
@@ -137,7 +143,7 @@ async def resume_feedback_with_jobposting(
 
         posting = JobPostingResponse.from_orm(posting).model_dump()
 
-        result = await resume_feedback_with_posting(resume=resume, posting=posting)
+        result = await resume_feedback_with_posting(resume=resume_dict, posting=posting)
 
         new_feedback = ResumeFeedback(
             resume_id=resume.get("resume_id"),
@@ -209,9 +215,12 @@ async def apply_feedback(
                 status_code=status.HTTP_403_FORBIDDEN, detail="잘못된 접근입니다."
             )
 
+        resume_response = ResumeResponse.model_validate(resume)
+        resume_dict = resume_response.model_dump()
+
         feedback = feedback.model_dump()
 
-        result = await create_resume_by_feedback(resume=resume, feedback=feedback)
+        result = await create_resume_by_feedback(resume=resume_dict, feedback=feedback)
 
         new_resume = await create_resume_with_feedback(
             result=result,
@@ -280,8 +289,11 @@ async def apply_feedback_with_posting(
         posting = JobPostingResponse.from_orm(posting)
         posting = posting.model_dump()
 
+        resume_response = ResumeResponse.model_validate(resume)
+        resume_dict = resume_response.model_dump()
+
         result = await create_posting_resume_by_feedback(
-            resume=resume, feedback=feedback, posting=posting
+            resume=resume_dict, feedback=feedback, posting=posting
         )
 
         new_resume = await create_resume_with_feedback(

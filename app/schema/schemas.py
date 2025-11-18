@@ -310,11 +310,8 @@ class ResumeResponse(BaseModel):
     
     image_url: Optional[str] = None
     portfolio_url: Optional[str] = None
-    resume_type : str
-    resume_type_detail: str
-    created_at: datetime
-    updated_at: datetime
-    
+
+
     model_config = ConfigDict(from_attributes=True)
 
 class ResumeListResponse(BaseModel):
