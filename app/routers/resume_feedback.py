@@ -301,6 +301,7 @@ async def apply_feedback_with_posting(
             db=db,
             user_id=current_user.user_id,
             parent_resume_id=resume.get("resume_id"),
+            company=posting.get('company')
         )
 
         return new_resume

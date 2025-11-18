@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import HTTPException, status
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import PydanticOutputParser
@@ -193,14 +194,14 @@ async def create_posting_resume_by_feedback(
 
 
 async def create_resume_with_feedback(
-    result: ResumeCreate, db: AsyncSession, user_id: int, parent_resume_id: int
+    result: ResumeCreate, db: AsyncSession, user_id: int, parent_resume_id: int, company: Optional[str]
 ) -> ResumeResponse:
     """피드백을 기반으로 생성된 이력서를 저장 후 출력하는 함수"""
 
     new_resume = Resume(
         user_id=user_id,
         resume_type=result.resume_type,
-        title=result.title,
+        title=f"[{result.title}][{company}] 첨삭 이력서" if company else f"[{result.title}] 첨삭 이력서",
         name=result.name,
         email=result.email,
         gender=result.gender,
