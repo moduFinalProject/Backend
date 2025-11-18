@@ -91,7 +91,7 @@ async def update_profile(
 
 
     
-@router.delete("/users/me", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
 async def withdraw_user(db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     user = current_user
 
