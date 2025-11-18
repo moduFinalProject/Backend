@@ -13,6 +13,7 @@ from app.models.models import (
     Code,
     Education,
     Experience,
+    JobPosting,
     Project,
     Qualification,
     Resume,
@@ -21,7 +22,12 @@ from app.models.models import (
 )
 from app.models.models import File as FileModel
 from app.service.resume_service import get_resume_response
-from app.schema.schemas import ResumeCreate, ResumeListResponse, ResumeResponse, ResumeUpdate
+from app.schema.schemas import (
+    ResumeCreate,
+    ResumeListResponse,
+    ResumeResponse,
+    ResumeUpdate,
+)
 from app.security import get_current_user
 from app.storage_util.storage_util import (
     delete_from_storage,
@@ -52,11 +58,24 @@ async def get_all_resumes(
 
     if not title:
         result = await db.execute(
-            select(Resume, Code.code_detail.label("resume_type_detail"))
+            select(
+                Resume.resume_id,
+                Resume.title,
+                Resume.created_at,
+                Resume.resume_type,
+                Code.code_detail.label("resume_type_detail"),
+                JobPosting.url,
+                JobPosting.end_date,
+            )
             .outerjoin(
                 Code,
                 (Code.division == "resume_type")
                 & (Code.detail_id == Resume.resume_type),
+            )
+            .outerjoin(
+                JobPosting,
+                (JobPosting.posting_id == Resume.posting_id)
+                & (JobPosting.is_active == True),
             )
             .where(
                 and_(Resume.user_id == current_user.user_id, Resume.is_active == True)
@@ -68,11 +87,24 @@ async def get_all_resumes(
 
     else:
         result = await db.execute(
-            select(Resume, Code.code_detail.label("resume_type_detail"))
+            select(
+                Resume.resume_id,
+                Resume.title,
+                Resume.created_at,
+                Resume.resume_type,
+                Code.code_detail.label("resume_type_detail"),
+                JobPosting.url,
+                JobPosting.end_date,
+            )
             .outerjoin(
                 Code,
                 (Code.division == "resume_type")
                 & (Code.detail_id == Resume.resume_type),
+            )
+            .outerjoin(
+                JobPosting,
+                (JobPosting.posting_id == Resume.posting_id)
+                & (JobPosting.is_active == True),
             )
             .where(
                 and_(
@@ -87,18 +119,7 @@ async def get_all_resumes(
         )
 
     rows = result.all()
-    resumes = []
-    for resume, resume_type_detail in rows:
-        resumes.append({
-            "resume_id": resume.resume_id,
-            "user_id": resume.user_id,
-            "title": resume.title,
-            "created_at": resume.created_at,
-            "resume_type": resume.resume_type,
-            "resume_type_detail": resume_type_detail,
-            "is_active": resume.is_active,
-        })
-    return resumes
+    return [row._asdict() for row in rows]
 
 
 @router.get("/{resume_id}", response_model=ResumeResponse)
@@ -522,4 +543,3 @@ async def deactivate_resume(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="이력서 삭제에 실패 했습니다.",
         )
-

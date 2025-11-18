@@ -320,6 +320,8 @@ class ResumeListResponse(BaseModel):
     created_at: datetime
     resume_type: str
     resume_type_detail : str
+    url : Optional[str]
+    end_date : Optional[datetime]
 
     model_config = ConfigDict(from_attributes=True)
 
