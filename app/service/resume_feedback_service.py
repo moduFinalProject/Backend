@@ -76,7 +76,7 @@ async def resume_feedback_with_posting(resume: dict, posting: dict) -> ResumeFee
                 "system",
                 """당신은 전직 {company} 회사의 인사과 팀장이자 이력서 첨삭 전문가 입니다. 이력서와 공고 정보를 받고 해당 회사에 취업할 수 있도록 이력서를 피드백 해주세요,
          단 사실에 근거해야 합니다.
-         parent_content는 이력서의 내용을 md 형식의 text로 정리하세요. 
+         parent_content는 입력받은 이력서의 내용을 마크다운 형식의 text로 빠지는 부분 없이 매우 구체적으로 정리하세요. 
          피드백 내용은 구체적으로 적어주세요,
          feedback_devision은 반드시 다음을 준수하세요 1:잘된 부분, 2:필수 수정 사항,3:개선 제안 사항, 4: 추가 권장사항""",
             ),
@@ -266,8 +266,8 @@ async def create_resume_with_feedback(
         filetype=image_file.filetype,
         fileable_table="resumes",
         org_file_name=image_file.org_file_name,
-        mod_file_name=new_image.get("new_image_key"),
-        file_key=new_image.get("unique_filename"),
+        mod_file_name=new_image.get("unique_filename"),
+        file_key=new_image.get("new_image_key"),
         purpose="resume_image",
     )
 

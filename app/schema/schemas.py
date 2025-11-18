@@ -485,6 +485,7 @@ class ResumeFeedbackResponse(BaseModel):
 
 class ResumeFeedbackListResponse(BaseModel):
     
+    feedback_id :int
     company: str
     resume_title : str
     content_count: int
