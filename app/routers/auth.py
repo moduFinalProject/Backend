@@ -3,19 +3,23 @@ import traceback
 import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 import httpx
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config.settings import settings
 from app.database import get_db
-from app.service.login_service import create_user, get_user_by_email, get_user_by_provider
+from app.models.models import User
+from app.service.login_service import (
+    create_user,
+    get_user_by_email,
+    get_user_by_provider,
+)
 from app.security import create_access_token
-from app.schema.schemas import AuthCode, UserCreate
+from app.schema.schemas import AuthCode, UserActivate, UserCreate
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
-
-
 
 
 @router.post("/google/localhost")
@@ -156,7 +160,17 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
                         "email": user_info["email"],
                         "name": user_info["name"],
                     },
+                    "is_active": True,
                 }
+
+        if user.is_active == False:
+            return {
+                "is_new_user": False,
+                "user": {
+                    "user_id": user.user_id
+                },
+                "is_active": False,
+            }
 
         # 6. JWT 생성
         jwt_token = create_access_token(data={"sub": user.unique_id})
@@ -170,6 +184,7 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
             "token_type": "bearer",
             "user": {"name": user.name, "email": user.email},
             "is_new_user": False,
+            "is_active": True,
         }
 
     except Exception as e:
@@ -185,7 +200,7 @@ async def auth_google(code: AuthCode, db: AsyncSession = Depends(get_db)):
 @router.post("/signup")
 async def signup(data: UserCreate, db: AsyncSession = Depends(get_db)):
     """신규 사용자 로그인 엔드포인트"""
-    
+
     try:
         user = await create_user(
             db=db,
@@ -198,21 +213,57 @@ async def signup(data: UserCreate, db: AsyncSession = Depends(get_db)):
             provider_id=data.provider_id,
             phone=data.phone,
             user_type=data.user_type,
-            military_service = data.military_service
+            military_service=data.military_service,
         )
 
         jwt_token = create_access_token(data={"sub": user.unique_id})
-        
+
         user.last_accessed = datetime.utcnow()
-        
+
         await db.commit()
-        
+
         return {
             "access_token": jwt_token,
             "token_type": "bearer",
             "user": {"name": user.name, "email": user.email},
         }
+
+    except Exception as e:
+        await db.rollback()
+        logger.error(f"예외 발생: {str(e)}")
+        logger.error(f"스택 트레이스:\n{traceback.format_exc()}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"에러 상세: {str(e)}",
+        )
+
+
+@router.post('/activate')
+async def activate_user(data: UserActivate, db: AsyncSession = Depends(get_db)):
+    '''비활성 유저 재 활성화 엔드포인트'''
     
+    
+    try:
+        user = await db.execute(select(User).where(User.user_id == data.user_id))
+        user = user.scalar_one_or_none()
+        
+        if not user : 
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='존재하지 않는 유저 입니다.')
+        
+        user.is_active = True
+        
+        jwt_token = create_access_token(data={"sub": user.unique_id})
+
+        user.last_accessed = datetime.utcnow()
+
+        await db.commit()
+
+        return {
+            "access_token": jwt_token,
+            "token_type": "bearer",
+            "user": {"name": user.name, "email": user.email},
+        }
+
     except Exception as e:
         await db.rollback()
         logger.error(f"예외 발생: {str(e)}")
