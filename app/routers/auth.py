@@ -79,6 +79,15 @@ async def auth_google_localhost(code: AuthCode, db: AsyncSession = Depends(get_d
                         "name": user_info["name"],
                     },
                 }
+                
+        if user.is_active == False:
+            return {
+                "is_new_user": False,
+                "user": {
+                    "user_id": user.user_id
+                },
+                "is_active": False,
+            }
 
         # 6. JWT 생성
         jwt_token = create_access_token(data={"sub": user.unique_id})
