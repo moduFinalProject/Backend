@@ -583,66 +583,55 @@ docker-compose up -d
 
 ## 13. 트러블슈팅 및 해결 사항
 
-### 13.1 데이터 타입 불일치 문제
+### 13.1 N+1 쿼리 문제 - contains_eager 성능 개선
 
-**문제:**
+**문제:** 이력서 상세 조회 시 관련 테이블 6개(경험, 교육, 프로젝트, 활동, 기술스택, 자격증) 조회로 1 + N × 6 형태의 쿼리 발생. 10개 이력서 조회 시 60개의 추가 쿼리 발생.
+
+**원인:** ORM의 기본 동작인 Lazy Loading으로 인해 관계 데이터가 필요한 시점에 별도 쿼리 실행.
+
+**해결책:**
 ```python
-feedback = await get_resume_feedback(...)  
-resume = await get_resume_response(feedback.resume_id) 
-# vs
-resume = await get_resume_response(feedback['resume_id'])  
-```
-
-**해결:**
-- Pydantic 모델은 ORM 객체처럼 `.속성` 접근
-- 명확한 타입 힌트로 실수 방지
-
-### 13.2 N+1 쿼리 문제
-
-**문제:**
-```python
-feedbacks = await db.execute(select(ResumeFeedback))
-for feedback in feedbacks:
-    contents = await db.execute(...) 
-```
-
-**해결:**
-```python
-feedbacks = await db.execute(
-    select(ResumeFeedback)
-    .options(joinedload(ResumeFeedback.feedback_contents))  # ✅ 1번에 로드
+stmt = (
+    select(Resume)
+    .outerjoin(Resume.experiences)
+    .outerjoin(Resume.educations)
+    .options(
+        contains_eager(Resume.experiences),
+        contains_eager(Resume.educations),
+    )
+    .where(Resume.resume_id == resume_id)
 )
+result = await db.execute(stmt)
+row = result.unique().first()  # 중복 제거
 ```
 
-### 13.3 소프트 삭제 처리
+**핵심 포인트:**
+- `outerjoin` + `contains_eager` 함께 사용 필수
+- `result.unique()`로 JOIN 결과의 중복 행 제거
+- 성능 개선: 1 + 60 쿼리 → 1 쿼리로 개선
 
-**문제:**
+---
+
+### 13.2 AI 응답 데이터 구조 불일치 - LangChain 파싱 실패
+
+**문제:** OpenAI API 응답이 Pydantic 스키마와 맞지 않아 필드 누락이나 타입 오류 발생 (예: feedback_contents 누락, matching_rate string 반환).
+
+**원인:** 프롬프트에 JSON 구조가 명확하게 명시되지 않아 LLM이 형식을 자유롭게 해석.
+
+**해결책:**
 ```python
-# 기존 항목도 반환됨
-items = await db.execute(select(Item))
+class ResumeFeedbackAI(BaseModel):
+    matching_rate: int = Field(ge=0, le=100, description="매칭률")
+    feedback_contents: List[dict] = Field(min_items=1, description="피드백 리스트")
+
+chain = prompt | llm.with_structured_output(ResumeFeedbackAI)
+result = await chain.ainvoke({"resume": data})
 ```
 
-**해결:**
-```python
-items = await db.execute(
-    select(Item)
-    .where(Item.is_active == True)
-)
-```
-
-### 13.4 마이그레이션 충돌
-
-**문제:**
-```python
-is_activate = Column(Boolean)  # 모델에는 is_active
-# 마이그레이션 불일치
-```
-
-**해결:**
-```bash
-alembic revision --autogenerate -m "rename is_activate to is_active"
-alembic upgrade head
-```
+**핵심 포인트:**
+- `with_structured_output()`으로 LLM 응답 자동 검증
+- Field의 description과 제약 조건이 프롬프트에 자동 반영
+- ValidationError 제거로 안정적인 파이프라인 구성
 
 ---
 
