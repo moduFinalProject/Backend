@@ -707,12 +707,14 @@ result = await chain.ainvoke({"resume": data})
 
 ### 아키텍처 다이아그램
 ```
-[캡쳐 영역] architecture_detailed
+<img width="999" height="518" alt="스크린샷 2025-11-18 오후 3 35 44" src="https://github.com/user-attachments/assets/11df953d-f525-44d9-a480-6e322df2da30" />
+ architecture_detailed
 ```
 
 ### 데이터베이스 ERD
 ```
-[캡쳐 영역] database_erd
+<img width="7954" height="6888" alt="Untitled diagram-2025-11-18-155954" src="https://github.com/user-attachments/assets/d391e37a-db3d-43fa-bae5-e5ee83e99745" />
+database_erd
 ```
 
 ### 실제 구현 기능 화면
