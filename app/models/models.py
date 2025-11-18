@@ -382,7 +382,7 @@ class ResumeFeedback(Base):
     posting_id = Column(
         Integer,
         ForeignKey("jobpostings.posting_id", ondelete="CASCADE"),
-        nullable=False,
+        nullable=True,
     )
     parent_content = Column(Text, nullable=False)
     matching_rate = Column(Integer, nullable=False)
