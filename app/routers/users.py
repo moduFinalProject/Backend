@@ -8,7 +8,6 @@ from app.models.models import JobPosting, Resume, User
 from app.models.models import User, JobPosting, Resume
 from app.schema.schemas import UserInfo, UserProfileResponse, UserProfileUpdate
 from app.security import get_current_user
-from models import DBUser
 
 logger = logging.getLogger(__name__)
 
