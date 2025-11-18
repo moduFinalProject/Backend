@@ -56,9 +56,7 @@ GAECHWI는 AI 기반 이력서 첨삭, 모의 면접, 맞춤형 학습 가이드
 
 ### 전체 시스템 흐름도
 
-```
-[캡쳐 영역] architecture_diagram
-```
+![아키텍처 구조도](./image/아키텍쳐%20구조도.png)
 
 ### 레이어별 구성
 
@@ -204,9 +202,7 @@ Users (사용자 정보)
 
 ### ERD (Entity-Relationship Diagram)
 
-```
-[캡쳐 영역] erd
-```
+![Database ERD](./image/erd.png)
 
 ### Code 테이블 (코드 매핑 패턴)
 
