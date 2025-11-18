@@ -194,7 +194,7 @@ async def create_posting_resume_by_feedback(
 
 
 async def create_resume_with_feedback(
-    result: ResumeCreate, db: AsyncSession, user_id: int, parent_resume_id: int, company: Optional[str]
+    result: ResumeCreate, db: AsyncSession, user_id: int, parent_resume_id: int, company: Optional[str], posting_id: Optional[int]
 ) -> ResumeResponse:
     """피드백을 기반으로 생성된 이력서를 저장 후 출력하는 함수"""
 
@@ -210,6 +210,7 @@ async def create_resume_with_feedback(
         military_service=result.military_service,
         birth_date=result.birth_date,
         self_introduction=result.self_introduction,
+        posting_id = posting_id if posting_id else None
     )
     db.add(new_resume)
     await db.flush()
