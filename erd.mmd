@@ -1,77 +1,77 @@
 erDiagram
-    USERS ||--o{ RESUMES : creates
-    USERS ||--o{ JOB_POSTINGS : creates
-    USERS ||--o{ INTERVIEWS : creates
-    USERS ||--o{ STUDY_GUIDES : creates
-    USERS ||--o{ USER_BLACKLISTS : initiates
-    USERS ||--o{ USER_ACTIVITY_LOGS : records
-    USERS ||--o{ RESUME_FEEDBACKS : creates
+    USERS ||--o{ RESUMES : "creates"
+    USERS ||--o{ JOB_POSTINGS : "creates"
+    USERS ||--o{ INTERVIEWS : "creates"
+    USERS ||--o{ STUDY_GUIDES : "creates"
+    USERS ||--o{ USER_BLACKLISTS : "initiates"
+    USERS ||--o{ USER_ACTIVITY_LOGS : "records"
+    USERS ||--o{ RESUME_FEEDBACKS : "creates"
 
-    RESUMES ||--o{ EXPERIENCES : contains
-    RESUMES ||--o{ EDUCATIONS : contains
-    RESUMES ||--o{ PROJECTS : contains
-    RESUMES ||--o{ ACTIVITIES : contains
-    RESUMES ||--o{ TECHNOLOGY_STACKS : contains
-    RESUMES ||--o{ QUALIFICATIONS : contains
-    RESUMES ||--o{ FILES : "has image"
-    RESUMES ||--o{ RESUME_FEEDBACKS : "analyzed by"
+    RESUMES ||--o{ EXPERIENCES : "contains"
+    RESUMES ||--o{ EDUCATIONS : "contains"
+    RESUMES ||--o{ PROJECTS : "contains"
+    RESUMES ||--o{ ACTIVITIES : "contains"
+    RESUMES ||--o{ TECHNOLOGY_STACKS : "contains"
+    RESUMES ||--o{ QUALIFICATIONS : "contains"
+    RESUMES ||--o{ FILES : "has_image"
+    RESUMES ||--o{ RESUME_FEEDBACKS : "analyzed_by"
 
-    RESUME_FEEDBACKS ||--o{ FEEDBACK_CONTENTS : contains
+    RESUME_FEEDBACKS ||--o{ FEEDBACK_CONTENTS : "contains"
     RESUME_FEEDBACKS }o--|| JOB_POSTINGS : "references"
 
-    JOB_POSTINGS ||--o{ INTERVIEWS : "associated with"
+    JOB_POSTINGS ||--o{ INTERVIEWS : "associated_with"
 
-    INTERVIEWS ||--o{ CONVERSATIONS : contains
-    INTERVIEWS ||--o{ INTERVIEW_FEEDBACKS : generates
+    INTERVIEWS ||--o{ CONVERSATIONS : "contains"
+    INTERVIEWS ||--o{ INTERVIEW_FEEDBACKS : "generates"
 
-    STUDY_GUIDES ||--o{ STUDY_ITEMS : contains
-    STUDY_ITEMS ||--o{ STUDY_KEYWORDS : contains
+    STUDY_GUIDES ||--o{ STUDY_ITEMS : "contains"
+    STUDY_ITEMS ||--o{ STUDY_KEYWORDS : "contains"
 
-    CODES ||--o{ RESUMES : "maps to"
-    CODES ||--o{ EDUCATIONS : "maps to"
-    CODES ||--o{ FEEDBACK_CONTENTS : "maps to"
-    CODES ||--o{ USERS : "maps to"
+    CODES ||--o{ RESUMES : "maps_to"
+    CODES ||--o{ EDUCATIONS : "maps_to"
+    CODES ||--o{ FEEDBACK_CONTENTS : "maps_to"
+    CODES ||--o{ USERS : "maps_to"
 
     FILES ||--o{ USERS : "stores"
     FILES ||--o{ RESUMES : "stores"
 
     USER_BLACKLISTS }o--|| USERS : "blocks"
 
-    USERS ||{
-        string user_id PK
-        string unique_id UK
-        string email UK
+    USERS {
+        string user_id "PK"
+        string unique_id "UK"
+        string email "UK"
         string name
         string provider
         string provider_id
-        string user_type FK
-        int gender FK
+        string user_type "FK"
+        int gender "FK"
         boolean is_active
         datetime created_at
         datetime updated_at
     }
 
-    RESUMES ||{
-        int resume_id PK
-        string user_id FK
+    RESUMES {
+        int resume_id "PK"
+        string user_id "FK"
         string title
         string name
         string email
-        int gender FK
+        int gender "FK"
         string address
         string phone
-        int military_service FK
+        int military_service "FK"
         date birth_date
         text self_introduction
-        int resume_type FK
+        int resume_type "FK"
         boolean is_active
         datetime created_at
         datetime updated_at
     }
 
-    EXPERIENCES ||{
-        int experience_id PK
-        int resume_id FK
+    EXPERIENCES {
+        int experience_id "PK"
+        int resume_id "FK"
         string company_name
         string position
         date start_date
@@ -80,20 +80,20 @@ erDiagram
         datetime created_at
     }
 
-    EDUCATIONS ||{
-        int education_id PK
-        int resume_id FK
+    EDUCATIONS {
+        int education_id "PK"
+        int resume_id "FK"
         string school_name
-        int degree_level FK
+        int degree_level "FK"
         string major
         date start_date
         date end_date
         datetime created_at
     }
 
-    PROJECTS ||{
-        int project_id PK
-        int resume_id FK
+    PROJECTS {
+        int project_id "PK"
+        int resume_id "FK"
         string title
         text description
         date start_date
@@ -102,9 +102,9 @@ erDiagram
         datetime created_at
     }
 
-    ACTIVITIES ||{
-        int activity_id PK
-        int resume_id FK
+    ACTIVITIES {
+        int activity_id "PK"
+        int resume_id "FK"
         string title
         text description
         date start_date
@@ -112,43 +112,43 @@ erDiagram
         datetime created_at
     }
 
-    TECHNOLOGY_STACKS ||{
-        int tech_id PK
-        int resume_id FK
+    TECHNOLOGY_STACKS {
+        int tech_id "PK"
+        int resume_id "FK"
         string tech_name
         datetime created_at
     }
 
-    QUALIFICATIONS ||{
-        int qualification_id PK
-        int resume_id FK
+    QUALIFICATIONS {
+        int qualification_id "PK"
+        int resume_id "FK"
         string qualification_name
         date acquisition_date
         datetime created_at
     }
 
-    RESUME_FEEDBACKS ||{
-        int feedback_id PK
-        int resume_id FK
-        int posting_id FK
-        string user_id FK
+    RESUME_FEEDBACKS {
+        int feedback_id "PK"
+        int resume_id "FK"
+        int posting_id "FK"
+        string user_id "FK"
         text parent_content
         int matching_rate
         datetime created_at
     }
 
-    FEEDBACK_CONTENTS ||{
-        int content_id PK
-        int feedback_id FK
-        int division FK
+    FEEDBACK_CONTENTS {
+        int content_id "PK"
+        int feedback_id "FK"
+        int division "FK"
         text content
         int order
         datetime created_at
     }
 
-    JOB_POSTINGS ||{
-        int posting_id PK
-        string user_id FK
+    JOB_POSTINGS {
+        int posting_id "PK"
+        string user_id "FK"
         string title
         string company
         text job_description
@@ -161,70 +161,70 @@ erDiagram
         datetime updated_at
     }
 
-    INTERVIEWS ||{
-        int interview_id PK
-        string user_id FK
-        int posting_id FK
+    INTERVIEWS {
+        int interview_id "PK"
+        string user_id "FK"
+        int posting_id "FK"
         string session_id
         boolean is_active
         datetime created_at
         datetime ended_at
     }
 
-    CONVERSATIONS ||{
-        int conversation_id PK
-        int interview_id FK
+    CONVERSATIONS {
+        int conversation_id "PK"
+        int interview_id "FK"
         string role
         text content
         int order
         datetime created_at
     }
 
-    INTERVIEW_FEEDBACKS ||{
-        int feedback_id PK
-        int interview_id FK
+    INTERVIEW_FEEDBACKS {
+        int feedback_id "PK"
+        int interview_id "FK"
         text feedback_content
         int score
         datetime created_at
     }
 
-    STUDY_GUIDES ||{
-        int guide_id PK
-        string user_id FK
-        int posting_id FK
+    STUDY_GUIDES {
+        int guide_id "PK"
+        string user_id "FK"
+        int posting_id "FK"
         string title
         text content
         datetime created_at
         datetime updated_at
     }
 
-    STUDY_ITEMS ||{
-        int item_id PK
-        int guide_id FK
+    STUDY_ITEMS {
+        int item_id "PK"
+        int guide_id "FK"
         string title
         text content
         int order
         datetime created_at
     }
 
-    STUDY_KEYWORDS ||{
-        int keyword_id PK
-        int item_id FK
+    STUDY_KEYWORDS {
+        int keyword_id "PK"
+        int item_id "FK"
         string keyword
         int order
         datetime created_at
     }
 
-    CODES ||{
-        int code_id PK
+    CODES {
+        int code_id "PK"
         string division
         string detail_id
         string code_detail
         int order
     }
 
-    FILES ||{
-        int file_id PK
+    FILES {
+        int file_id "PK"
         string file_key
         int fileable_id
         string fileable_table
@@ -234,18 +234,18 @@ erDiagram
         datetime created_at
     }
 
-    USER_BLACKLISTS ||{
-        int blacklist_id PK
-        string blocker_user_id FK
-        string blocked_user_id FK
-        string updated_by FK
+    USER_BLACKLISTS {
+        int blacklist_id "PK"
+        string blocker_user_id "FK"
+        string blocked_user_id "FK"
+        string updated_by "FK"
         datetime created_at
         datetime updated_at
     }
 
-    USER_ACTIVITY_LOGS ||{
-        int log_id PK
-        string user_id FK
+    USER_ACTIVITY_LOGS {
+        int log_id "PK"
+        string user_id "FK"
         string action
         text details
         datetime created_at
