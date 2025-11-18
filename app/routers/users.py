@@ -1,12 +1,14 @@
+from datetime import datetime
 import logging
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import update
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models.models import JobPosting, Resume, User
 from app.models.models import User, JobPosting, Resume
 from app.schema.schemas import UserInfo, UserProfileResponse, UserProfileUpdate
 from app.security import get_current_user
+from models import DBUser
 
 logger = logging.getLogger(__name__)
 
@@ -124,3 +126,45 @@ async def delete_account(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"계정 비활성화 중 오류가 발생했습니다: {str(e)}"
         )
+    
+@router.delete("/users/me", status_code=status.HTTP_204_NO_CONTENT)
+async def withdraw_user(db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    user = current_user
+
+    if not user:
+        raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+    
+    user.is_active = False
+    user.deleted_at = datetime.now()
+    user.email = None
+    user.phone_number = None
+    user.username = "탈퇴한 사용자"
+
+    await db.commit()
+
+    return
+
+@router.put("/reactivate/{user_id}", status_code=status.HTTP_200_OK)
+async def reactivate_user(user_id: int, db: AsyncSession = Depends(get_db)):
+    """
+    비활성화된 사용자 계정을 다시 활성화합니다.
+    """
+    
+    stmt = select(user).where(User.id == user_id, User.is_active == False)
+    result = await db.execute(stmt)
+    user = result.scalars().first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detuil=f"User with ID {user_id} is either not found or is already active."
+        )
+    
+
+    user.is_active = True
+    user.username = None
+
+    await db.commit()
+    await db.refresh(user)
+
+    return {"message": "User successfully reactivated. User profile update is required.", "user_id": user.id}
