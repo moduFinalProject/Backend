@@ -47,7 +47,8 @@ class UserCreate(BaseModel):
             return v.strip()
         return v
     
-
+class UserActivate(BaseModel):
+    user_id : int
 
 
 class AuthCode(BaseModel):
@@ -491,3 +492,5 @@ class ResumeFeedbackListResponse(BaseModel):
     matching_rate : int
     
     model_config = ConfigDict(from_attributes=True)
+    
+
