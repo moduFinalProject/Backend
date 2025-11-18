@@ -48,30 +48,7 @@ GAECHWI는 AI 기반 이력서 첨삭, 모의 면접, 맞춤형 학습 가이드
 ### 전체 흐름도
 
 ```
-┌──────────────────────────────────────────────────────┐
-│              Frontend (React/TypeScript)              │
-└──────────────────────┬───────────────────────────────┘
-                       │
-                  (HTTP/WebSocket)
-                       │
-┌──────────────────────▼───────────────────────────────┐
-│               FastAPI Backend                        │
-│  - Router Layer (요청 처리)                           │
-│  - Business Logic (AI 분석, DB 쿼리)                 │
-│  - Data Access (ORM, SQLAlchemy)                     │
-└─────┬──────────────┬────────────────┬────────────────┘
-      │              │                │
-   ┌──▼──┐       ┌───▼────┐      ┌────▼────┐
-   │ PostG│       │ Redis  │      │ OpenAI  │
-   │ SQL  │       │(캐시)  │      │API      │
-   └──────┘       └────────┘      └─────────┘
-      │
-      ├─ Users (사용자)
-      ├─ Resumes (이력서 + 피드백)
-      ├─ Interviews (모의 면접)
-      ├─ JobPostings (채용 공고)
-      ├─ StudyGuides (학습 가이드)
-      └─ Files (S3 파일 링크)
+아키텍처 구조도 사진
 ```
 
 ### 레이어별 구성
@@ -118,22 +95,20 @@ GAECHWI는 AI 기반 이력서 첨삭, 모의 면접, 맞춤형 학습 가이드
 
 | 분류 | 기술 | 버전 | 용도 |
 | --- | --- | --- | --- |
-| **Framework** | FastAPI | 0.100+ | 비동기 API 서버 |
-| **ASGI Server** | Uvicorn | 0.20+ | 고성능 ASGI 서버 |
-| **Database** | PostgreSQL | 14+ | 관계형 DB |
-| **ORM** | SQLAlchemy | 2.0+ | 비동기 ORM |
-| **Migration** | Alembic | 1.12+ | 스키마 버전 관리 |
-| **AI/ML** | LangChain | 0.1+ | 자연어 처리 |
-| **LLM** | OpenAI | 1.0+ | 텍스트 생성 |
-| **Cache** | Redis | 7.0+ | 세션/캐시 |
-| **Auth** | Python-jose | 3.3+ | JWT 토큰 |
-| **OAuth** | Google Auth | - | 사용자 인증 |
-| **File Storage** | Boto3 (AWS S3) | 1.28+ | 파일 저장소 |
-| **Environment** | Python-dotenv | 1.0+ | 환경변수 관리 |
-| **Validation** | Pydantic | 2.0+ | 데이터 검증 |
-| **Testing** | pytest | 7.4+ | 단위 테스트 |
-| **Container** | Docker | 24.0+ | 컨테이너화 |
-| **Container Compose** | Docker Compose | 2.20+ | 로컬 개발 환경 |
+| **Framework** | FastAPI | 비동기 API 서버 |
+| **ASGI Server** | Uvicorn | 고성능 ASGI 서버 |
+| **Database** | PostgreSQL | 관계형 DB |
+| **ORM** | SQLAlchemy | 비동기 ORM |
+| **Migration** | Alembic | 스키마 버전 관리 |
+| **AI/ML** | LangChain | 자연어 처리 |
+| **LLM** | OpenAI | 텍스트 생성 |
+| **Cache** | Redis | 세션/캐시 |
+| **Auth** | Python-jose | JWT 토큰 |
+| **OAuth** | Google Auth | 사용자 인증 |
+| **File Storage** | Boto3 (Lightsail bucket) | 파일 저장소 |
+| **Validation** | Pydantic | 데이터 검증 |
+| **Container** | Docker | 컨테이너화 |
+| **Container Compose** | Docker Compose | 로컬 개발 환경 |
 
 ---
 
@@ -324,55 +299,8 @@ Users (사용자)
 
 #### User 모델
 
-```python
-class User(Base):
-    __tablename__ = "users"
-
-    user_id: String(22) = Column(primary_key=True)
-    email: String(255) = Column(unique=True)
-    name: String(50)
-    provider: String(50)  # "google"
-    provider_id: String(255)
-    is_active: Boolean = True  # 소프트 삭제
-    created_at: DateTime = Column(default=now_utc)
-
-    resumes = relationship("Resume", cascade="all, delete-orphan")
-    job_postings = relationship("JobPosting", cascade="all, delete-orphan")
-    interviews = relationship("Interview", cascade="all, delete-orphan")
-```
-
-#### Resume 모델
-
-```python
-class Resume(Base):
-    __tablename__ = "resumes"
-
-    resume_id: Integer = Column(primary_key=True)
-    user_id: String(22) = Column(ForeignKey("users.user_id"))
-    title: String(30)
-    resume_type: String(10)  # "1" (기본), "2" (공고별), "3" (개선)
-    is_active: Boolean = True  # 소프트 삭제
-
-    experiences = relationship("Experience", cascade="all, delete-orphan")
-    resume_feedbacks = relationship("ResumeFeedback", cascade="all, delete-orphan")
-    files = relationship("File", cascade="all, delete-orphan")
-```
-
-#### ResumeFeedback 모델
-
-```python
-class ResumeFeedback(Base):
-    __tablename__ = "resume_feedbacks"
-
-    feedback_id: Integer = Column(primary_key=True)
-    resume_id: Integer = Column(ForeignKey("resumes.resume_id"))
-    posting_id: Integer = Column(ForeignKey("jobpostings.posting_id"), nullable=True)
-    user_id: String(22) = Column(ForeignKey("users.user_id"))
-    matching_rate: Integer  # 0-100%
-    parent_content: Text  # 마크다운 형식
-    created_at: DateTime
-
-    feedback_contents = relationship("FeedbackContent", cascade="all, delete-orphan")
+```pythone
+erd
 ```
 
 ### 7.3 Code 테이블 (코드 매핑)
@@ -510,7 +438,6 @@ Content-Type: application/json
   "email": "user@example.com",
   "name": "박영서",
   "exp": 1700200000,  # 만료 시간
-  "iat": 1700198200   # 발급 시간
 }
 
 # 토큰 저장
