@@ -101,35 +101,8 @@ async def withdraw_user(db: AsyncSession = Depends(get_db), current_user: User =
     
     user.is_active = False
     user.deleted_at = datetime.now()
-    user.email = None
-    user.phone_number = None
-    user.username = "탈퇴한 사용자"
+
 
     await db.commit()
 
     return
-
-@router.put("/reactivate/{user_id}", status_code=status.HTTP_200_OK)
-async def reactivate_user(user_id: int, db: AsyncSession = Depends(get_db)):
-    """
-    비활성화된 사용자 계정을 다시 활성화합니다.
-    """
-    
-    stmt = select(user).where(User.id == user_id, User.is_active == False)
-    result = await db.execute(stmt)
-    user = result.scalars().first()
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detuil=f"User with ID {user_id} is either not found or is already active."
-        )
-    
-
-    user.is_active = True
-    user.username = None
-
-    await db.commit()
-    await db.refresh(user)
-
-    return {"message": "User successfully reactivated. User profile update is required.", "user_id": user.id}
