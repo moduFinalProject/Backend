@@ -91,41 +91,6 @@ async def update_profile(
 
 
 
-
-
-@router.delete("/account", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_account(
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """계정 및 소유 데이터 비활성화"""
-    try:
-        user_id = current_user.user_id
-
-        current_user.is_active = False
-
-        await db.execute(
-            update(JobPosting)
-            .where(JobPosting.user_id == user_id)
-            .values(is_active=False)
-        )
-
-        await db.execute(
-            update(Resume)
-            .where(Resume.user_id == user_id)
-            .values(is_active=False)
-        )
-
-
-        await db.commit()
-
-        return
-    except Exception as e:
-        await db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"계정 비활성화 중 오류가 발생했습니다: {str(e)}"
-        )
     
 @router.delete("/users/me", status_code=status.HTTP_204_NO_CONTENT)
 async def withdraw_user(db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
