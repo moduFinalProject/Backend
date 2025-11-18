@@ -189,7 +189,7 @@ class Resume(Base):
     posting_id = Column(
         Integer, ForeignKey("jobpostings.posting_id", ondelete="SET NULL")
     )
-    title = Column(VARCHAR(30), nullable=False)
+    title = Column(VARCHAR(100), nullable=False)
     resume_type = Column(VARCHAR(10), nullable=False)
     is_active = Column(Boolean, default=True)
     deleted_at = Column(TIMESTAMP(timezone=True))
