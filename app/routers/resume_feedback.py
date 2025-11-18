@@ -1,7 +1,7 @@
 from typing import List
 import logging
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import func, select
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models.models import (
@@ -52,7 +52,7 @@ async def resume_feedback(
 
     try:
         resume = await get_resume_response(resume_id=resume_id, db=db)
-        
+
         if resume is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -63,7 +63,7 @@ async def resume_feedback(
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="잘못된 접근입니다."
             )
-            
+
         resume_response = ResumeResponse.model_validate(resume)
         resume_dict = resume_response.model_dump()
 
@@ -301,8 +301,8 @@ async def apply_feedback_with_posting(
             db=db,
             user_id=current_user.user_id,
             parent_resume_id=resume.get("resume_id"),
-            company=posting.get('company'),
-            posting_id = posting.get('posting_id')
+            company=posting.get("company"),
+            posting_id=posting.get("posting_id"),
         )
 
         return new_resume
@@ -346,12 +346,13 @@ async def get_resumefeedback_list(
                 (JobPosting.posting_id == ResumeFeedback.posting_id)
                 & (JobPosting.is_active == True),
             )
-            .outerjoin(
-                Resume,
-                (Resume.resume_id == ResumeFeedback.resume_id)
-                & (Resume.is_active == True),
+            .outerjoin(Resume, (Resume.resume_id == ResumeFeedback.resume_id))
+            .where(
+                and_(
+                    ResumeFeedback.user_id == current_user.user_id,
+                    Resume.is_active == True,
+                )
             )
-            .where(ResumeFeedback.user_id == current_user.user_id)
             .group_by(
                 ResumeFeedback.feedback_id,
                 ResumeFeedback.matching_rate,
@@ -367,7 +368,7 @@ async def get_resumefeedback_list(
 
         return [
             ResumeFeedbackListResponse(
-                feedback_id = row.feedback_id,
+                feedback_id=row.feedback_id,
                 company=row.company,
                 resume_title=row.title,
                 content_count=row.content_count,
@@ -414,11 +415,11 @@ async def delete_feedback(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    '''피드백 삭제 엔드 포인트'''
-    
+    """피드백 삭제 엔드 포인트"""
+
     try:
         feedback = await db.get(ResumeFeedback, feedback_id)
-        
+
         if feedback is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -429,9 +430,9 @@ async def delete_feedback(
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN, detail="잘못된 접근입니다."
             )
-        
+
         await db.delete(feedback)
-        
+
         await db.commit()
 
     except Exception as e:
