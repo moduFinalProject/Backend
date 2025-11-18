@@ -112,8 +112,6 @@ async def get_resume_feedback(
 
     if feedback is None:
         return None
-    
-    
 
     feedback_divisions = [
         content.feedback_devision
@@ -137,7 +135,6 @@ async def get_resume_feedback(
         content.feedback_devision_detail = feedback_code_map.get(
             content.feedback_devision
         )
-    
 
     result = ResumeFeedbackResponse.from_orm(feedback)
 
@@ -194,14 +191,23 @@ async def create_posting_resume_by_feedback(
 
 
 async def create_resume_with_feedback(
-    result: ResumeCreate, db: AsyncSession, user_id: int, parent_resume_id: int, company: Optional[str], posting_id: Optional[int]
+    result: ResumeCreate,
+    db: AsyncSession,
+    user_id: int,
+    parent_resume_id: int,
+    company: Optional[str] = None,
+    posting_id: Optional[int] = None,
 ) -> ResumeResponse:
     """피드백을 기반으로 생성된 이력서를 저장 후 출력하는 함수"""
 
     new_resume = Resume(
         user_id=user_id,
         resume_type=result.resume_type,
-        title=f"[{result.title}][{company}] 첨삭 이력서" if company else f"[{result.title}] 첨삭 이력서",
+        title=(
+            f"[{result.title}][{company}] 첨삭 이력서"
+            if company
+            else f"[{result.title}] 첨삭 이력서"
+        ),
         name=result.name,
         email=result.email,
         gender=result.gender,
@@ -210,7 +216,7 @@ async def create_resume_with_feedback(
         military_service=result.military_service,
         birth_date=result.birth_date,
         self_introduction=result.self_introduction,
-        posting_id = posting_id if posting_id else None
+        posting_id=posting_id if posting_id else None,
     )
     db.add(new_resume)
     await db.flush()
