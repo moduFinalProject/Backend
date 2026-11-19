@@ -5,7 +5,7 @@ from .production import ProductionConfig
 def get_settings():
     """환경에 따라 적절한 설정 객체 반환"""
     # 터미널에서 직접 설정한 환경변수 읽기
-    env = os.getenv("ENV", "development")
+    env = os.getenv("ENVIRONMENT", "development")
     
     config_map = {
         "development": DevelopmentConfig,

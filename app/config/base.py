@@ -25,7 +25,7 @@ class BaseConfig(BaseSettings):
     ai_model: str = "gpt-4o-mini"
     temperature : float = 0.7
     
-    
+    history_ttl : int = 86400
     
     class Config:
         env_file_encoding = "utf-8"
