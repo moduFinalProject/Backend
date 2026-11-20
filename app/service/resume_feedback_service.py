@@ -27,7 +27,7 @@ from app.schema.schemas import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import contains_eager, joinedload
-from ai import llm
+from app.ai import llm
 from app.service.resume_service import get_resume_response
 from app.storage_util.storage_util import (
     copy_image,
