@@ -269,9 +269,12 @@ async def _add_sample_data(db: AsyncSession, user: User) -> None:
         resume_id=resume2.resume_id,
         posting_id=postings[0].posting_id,
         total_score=78,
+        status="2",  # 면접 상태 코드: 2 = 완료
     )
     db.add(interview)
     await db.flush()
+    # conversations.created_at 컬럼이 timezone 없는 TIMESTAMP라 naive UTC로 넣음
+    naive_now = datetime.now(timezone.utc).replace(tzinfo=None)
     db.add_all(
         [
             Conversation(
@@ -279,28 +282,29 @@ async def _add_sample_data(db: AsyncSession, user: User) -> None:
                 question="진행한 프로젝트에서 가장 어려웠던 기술적 문제와 해결 과정을 설명해 주세요.",
                 answer="DB 마이그레이션 순서 충돌로 배포가 실패했고, 마이그레이션 이력을 분석해 해당 단계를 정리한 뒤 재배포했습니다.",
                 feedback="문제 원인과 해결 과정이 명확합니다. 재발 방지책도 함께 언급하면 더 좋습니다.",
+                sequence=1,
+                created_at=naive_now,
             ),
             Conversation(
                 interview_id=interview.interview_id,
                 question="REST API를 설계할 때 중요하게 생각하는 기준은 무엇인가요?",
                 answer="자원 중심의 일관된 URL, 적절한 상태 코드, 그리고 오류 응답 형식의 통일을 중요하게 생각합니다.",
                 feedback="핵심은 잘 짚었습니다. 버전 관리나 인증 처리 기준도 덧붙여 보세요.",
+                sequence=2,
+                created_at=naive_now,
             ),
             InterviewFeedback(
                 interview_id=interview.interview_id,
-                title="논리적인 답변 구성",
                 status="1",
                 content="질문의 의도에 맞게 상황과 해결 과정을 순서대로 설명했습니다.",
             ),
             InterviewFeedback(
                 interview_id=interview.interview_id,
-                title="구체적 수치 보완",
                 status="2",
                 content="성과를 수치로 제시하면 답변의 설득력이 높아집니다.",
             ),
             InterviewFeedback(
                 interview_id=interview.interview_id,
-                title="심화 학습 권장",
                 status="3",
                 content="데이터베이스 인덱스와 트랜잭션 격리 수준을 더 학습해 보세요.",
             ),
