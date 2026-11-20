@@ -328,7 +328,6 @@ class Education(Base):
     resume = relationship("Resume", back_populates="educations")
 
 
-
 class Qualification(Base):
 
     __tablename__ = "qualifications"
@@ -435,6 +434,7 @@ class Interview(Base):
         Integer, ForeignKey("jobpostings.posting_id", ondelete="SET NULL")
     )
     total_score = Column(Integer)
+    status = Column(VARCHAR(10), nullable=False)
 
     user = relationship("User", back_populates="interviews")
     resume = relationship("Resume", back_populates="interviews")
@@ -460,8 +460,10 @@ class Conversation(Base):
         nullable=False,
     )
     question = Column(VARCHAR(300), nullable=False)
-    answer = Column(VARCHAR(300), nullable=False)
-    feedback = Column(VARCHAR(300), nullable=False)
+    answer = Column(VARCHAR(300), nullable=True, default=None)
+    feedback = Column(VARCHAR(300), nullable=True, default=None)
+    sequence = Column(Integer, nullable=False)
+    created_at = Column(TIMESTAMP, default=lambda: datetime.now(timezone.utc))
 
     interview = relationship("Interview", back_populates="conversations")
 
@@ -476,7 +478,6 @@ class InterviewFeedback(Base):
         ForeignKey("interviews.interview_id", ondelete="CASCADE"),
         nullable=False,
     )
-    title = Column(VARCHAR(20), nullable=False)
     status = Column(VARCHAR(5), nullable=False)
     content = Column(VARCHAR(100), nullable=False)
 
