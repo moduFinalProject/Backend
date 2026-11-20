@@ -16,6 +16,11 @@ from app.service.login_service import (
 )
 from app.security import create_access_token
 from app.schema.schemas import AuthCode, UserActivate, UserCreate
+from app.service.guest_service import (
+    GuestLimitExceeded,
+    cleanup_expired_guests,
+    create_guest_user,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -273,6 +278,46 @@ async def activate_user(data: UserActivate, db: AsyncSession = Depends(get_db)):
             "user": {"name": user.name, "email": user.email},
         }
 
+    except Exception as e:
+        await db.rollback()
+        logger.error(f"예외 발생: {str(e)}")
+        logger.error(f"스택 트레이스:\n{traceback.format_exc()}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"에러 상세: {str(e)}",
+        )
+        
+@router.post("/guest")
+async def auth_guest(db: AsyncSession = Depends(get_db)):
+    """체험용 게스트 로그인: 방문마다 샘플 데이터가 담긴 임시 계정을 새로 만든다."""
+    try:
+        try:
+            await cleanup_expired_guests(db)
+        except Exception as e:
+            await db.rollback()
+            logger.warning(f"만료된 게스트 정리 실패: {e}")
+
+        user = await create_guest_user(db)
+
+        jwt_token = create_access_token(data={"sub": user.unique_id})
+
+        user.last_accessed = datetime.now(timezone.utc)
+        await db.commit()
+        await db.refresh(user)
+
+        return {
+            "access_token": jwt_token,
+            "token_type": "bearer",
+            "user": {"name": user.name, "email": user.email},
+            "is_new_user": False,
+            "is_active": True,
+        }
+
+    except GuestLimitExceeded:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="체험 계정이 가득 찼습니다. 잠시 후 다시 시도해주세요.",
+        )
     except Exception as e:
         await db.rollback()
         logger.error(f"예외 발생: {str(e)}")
