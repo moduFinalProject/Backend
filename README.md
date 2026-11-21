@@ -294,7 +294,7 @@ code_map = {code.detail_id: code.code_detail for code in codes.scalars().all()}
 | Method  | Path                         | 기능          | 설명                               |
 | ------- | ---------------------------- | ------------- | ---------------------------------- |
 | `POST`  | `/job-postings/`             | 공고 생성     | 채용담당자가 채용 공고 등록        |
-| `GET`   | `/job-postings/`             | 목록 조회     | 페이징 및 검색 지원 (제목, 회사명) |
+| `GET`   | `/job-postings/`             | 목록 조회     | 페이징 및 제목 검색 지원 |
 | `GET`   | `/job-postings/{posting_id}` | 상세 조회     | 공고 상세 정보 및 요구사항 확인    |
 | `PUT`   | `/job-postings/{posting_id}` | 수정          | 공고 정보 수정                     |
 | `PATCH` | `/job-postings/{posting_id}` | 삭제 (소프트) | 공고 숨김 처리 (is\_active=False)  |
@@ -303,7 +303,7 @@ code_map = {code.detail_id: code.code_detail for code in codes.scalars().all()}
 
 * 소프트 삭제: 데이터 완전 삭제 없이 is\_active 플래그로 상태 관리
 * 페이징: page=1, page\_size=6 형식으로 효율적인 데이터 로드
-* 전문 검색: 제목, 회사명, 기술 스택으로 다양한 검색 지원
+* 제목 검색: 제목에 검색어가 포함된 공고 조회
 
 ---
 
@@ -719,10 +719,10 @@ result = await chain.ainvoke({"resume": data})
 
 ### 아키텍처 구조도
 
-[아키텍처 구조도](https://claude.ai/chat/image/%EC%95%84%ED%82%A4%ED%85%8D%EC%B3%90%20%EA%B5%AC%EC%A1%B0%EB%8F%84.png)
+![아키텍처 구조도](./image/아키텍쳐%20구조도.png)[
 
 ### 데이터베이스 ERD
 
-[Database ERD](https://claude.ai/chat/image/erd.png)
+![Database ERD](./image/erd.png)
 
 ---
