@@ -60,7 +60,7 @@ async def resume_standard_feedback(resume: dict) -> ResumeFeedbackAI:
 
     chain = prompt | llm.with_structured_output(ResumeFeedbackAI)
 
-    result = chain.invoke({"resume": resume})
+    result = await chain.ainvoke({"resume": resume})
 
     return result
 
@@ -85,7 +85,7 @@ async def resume_feedback_with_posting(resume: dict, posting: dict) -> ResumeFee
 
     chain = prompt | llm.with_structured_output(ResumeFeedbackAI)
 
-    result = chain.invoke(
+    result = await chain.ainvoke(
         {"company": posting.get("company"), "resume": resume, "posting": posting}
     )
 
@@ -152,7 +152,7 @@ async def create_resume_by_feedback(resume: dict, feedback: dict) -> ResumeCreat
 
     chain = prompt | llm.with_structured_output(ResumeCreate)
 
-    result = chain.invoke({"resume": resume, "feedback": feedback})
+    result = await chain.ainvoke({"resume": resume, "feedback": feedback})
 
     return result
 
@@ -174,7 +174,7 @@ async def create_posting_resume_by_feedback(
 
     chain = prompt | llm.with_structured_output(ResumeCreate)
 
-    result = chain.invoke(
+    result = await chain.ainvoke(
         {
             "company": posting.get("company"),
             "resume": resume,

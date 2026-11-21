@@ -21,9 +21,29 @@
 11. [배포 및 운영](#11-배포-및-운영)
 12. [트러블슈팅 및 해결 사항](#12-트러블슈팅-및-해결-사항)
 
----
+
+**프로젝트 페이지:** [https://park-yeongseo.github.io/frontend/](https://park-yeongseo.github.io/frontend/)  (로그인 화면의 **게스트로 체험하기**로 가입 없이 사용해 볼 수 있습니다)
+
+**백엔드 API:** `https://gaechwi.duckdns.org` (AWS Lightsail, Docker Compose)
 
 ## 1. 프로젝트 소개
+
+GAECHWI는 AI 기반 이력서 첨삭과 채용 공고별 맞춤 피드백을 제공하는 취업 준비 플랫폼입니다. 구직자가 이력서를 관리하고, 공고에 맞춰 개선할 수 있도록 지원합니다.
+
+### 핵심 가치
+
+- **자동화된 피드백**: OpenAI API를 활용한 고급 자연어 처리로 이력서 분석 및 개선 제안
+- **채용 공고 연동**: 각 채용 공고별 맞춤형 피드백 제공
+
+### 주요 기능
+
+- 이력서 작성 및 관리 (CRUD)
+- AI 기반 이력서 첨삭 및 매칭률 평가
+- 채용 공고별 맞춤형 피드백
+- 피드백을 반영한 개선 이력서 자동 생성
+- 게스트 체험 (가입 없이 샘플 데이터로 사용, 24시간 후 자동 삭제)
+
+**개발 예정:** AI 모의 면접, 직무별 학습 가이드
 
 GAECHWI는 AI 기반 이력서 첨삭, 모의 면접, 맞춤형 학습 가이드를 제공하는 취업 준비 통합 플랫폼입니다. 구직자가 채용 과정 전반에서 경쟁력을 갖추도록 지원합니다.
 
@@ -45,10 +65,11 @@ GAECHWI는 AI 기반 이력서 첨삭, 모의 면접, 맞춤형 학습 가이드
 
 ## 2. 백엔드 팀 구성
 
-| 이름 | 역할 | 담당 영역 |
-| --- | --- | --- |
+
+| 이름       | 역할             | 담당 영역                                             |
+| ---------- | ---------------- | ----------------------------------------------------- |
 | **박영서** | 아키텍트, 개발자 | DB 설계/구현, AI 통합, 이력서/피드백 로직, OAuth 인증 |
-| **김경환** | 개발자 | 채용 공고 관리, DB 설계/구현, 유저 관리 |
+| **김경환** | 개발자           | 채용 공고 관리, DB 설계/구현, 유저 관리               |
 
 ---
 
@@ -97,6 +118,7 @@ GAECHWI는 AI 기반 이력서 첨삭, 모의 면접, 맞춤형 학습 가이드
 ```
 
 **아키텍처 특징:**
+
 - **비동기 처리**: FastAPI + Uvicorn으로 높은 동시성 지원
 - **이중 DB 엔진**: Alembic 마이그레이션용 동기 엔진, API용 비동기 엔진
 - **마이크로서비스 패턴**: 로직 계층 분리로 유지보수성 향상
@@ -106,70 +128,69 @@ GAECHWI는 AI 기반 이력서 첨삭, 모의 면접, 맞춤형 학습 가이드
 
 ## 4. 기술 스택
 
-| 분류 | 기술 | 용도 | 버전 |
-| --- | --- | --- | --- |
-| **Framework** | FastAPI | 비동기 API 서버 | 최신 |
-| **ASGI Server** | Uvicorn | 고성능 ASGI 서버 | 최신 |
-| **Database** | PostgreSQL | 관계형 DB | 14+ |
-| **ORM** | SQLAlchemy | 비동기 ORM | 2.0+ |
-| **Migration** | Alembic | 스키마 버전 관리 | 최신 |
-| **AI/ML** | LangChain | 자연어 처리 프레임워크 | 최신 |
-| **LLM** | OpenAI GPT-4 | 텍스트 생성 및 분석 | 최신 |
-| **Cache** | Redis | 세션/캐시 저장소 | 6+ |
-| **Auth** | Python-jose | JWT 토큰 생성/검증 | 최신 |
-| **OAuth** | Google Auth | 소셜 로그인 | OAuth 2.0 |
-| **File Storage** | Boto3 (Lightsail) | 클라우드 파일 저장소 | 최신 |
-| **Validation** | Pydantic | 데이터 검증 및 직렬화 | 2.0+ |
-| **Container** | Docker | 컨테이너 이미지 | 최신 |
-| **Orchestration** | Docker Compose | 개발/운영 환경 구성 | 최신 |
 
----
+| 분류              | 기술              | 용도                   | 버전      |
+| ----------------- | ----------------- | ---------------------- | --------- |
+| **Framework**     | FastAPI           | 비동기 API 서버        | 최신      |
+| **ASGI Server**   | Uvicorn           | 고성능 ASGI 서버       | 최신      |
+| **Database**      | PostgreSQL        | 관계형 DB              | 14+       |
+| **ORM**           | SQLAlchemy        | 비동기 ORM             | 2.0+      |
+| **Migration**     | Alembic           | 스키마 버전 관리       | 최신      |
+| **AI/ML**         | LangChain         | 자연어 처리 프레임워크 | 최신      |
+| **LLM**           | OpenAI GPT-4      | 텍스트 생성 및 분석    | 최신      |
+| **Cache**         | Redis             | 세션/캐시 저장소       | 6+        |
+| **Auth**          | Python-jose       | JWT 토큰 생성/검증     | 최신      |
+| **OAuth**         | Google Auth       | 소셜 로그인            | OAuth 2.0 |
+| **File Storage**  | Boto3 (Lightsail) | 클라우드 파일 저장소   | 최신      |
+| **Validation**    | Pydantic          | 데이터 검증 및 직렬화  | 2.0+      |
+| **Container**     | Docker            | 컨테이너 이미지        | 최신      |
+| **Orchestration** | Docker Compose    | 개발/운영 환경 구성    | 최신      |
 
 ## 5. 프로젝트 구조
 
 ```
-/Users/yeongseo/Desktop/final_project/
+Backend/
 ├── app/
 │   ├── routers/              # API 엔드포인트 (라우트 정의)
-│   │   ├── auth.py           # 인증 엔드포인트 (Google OAuth, JWT 갱신)
-│   │   ├── resumes.py        # 이력서 CRUD 엔드포인트
-│   │   ├── resume_feedback.py# AI 피드백 생성/조회 엔드포인트
-│   │   ├── job_postings.py   # 채용 공고 관리 엔드포인트
-│   │   └── users.py          # 사용자 정보 엔드포인트
+│   │   ├── auth.py           # 인증 (Google OAuth, 회원가입, 게스트 로그인)
+│   │   ├── resumes.py        # 이력서 CRUD
+│   │   ├── resume_feedback.py# AI 피드백 생성/조회
+│   │   ├── job_postings.py   # 채용 공고 관리
+│   │   ├── users.py          # 사용자 정보
+│   │   └── dashboard.py      # 대시보드
 │   │
-│   ├── util/                 # 비즈니스 로직 (핵심 처리 로직)
-│   │   ├── resume_util.py    # 이력서 조회/생성 로직
-│   │   ├── resume_feedback_util.py  # AI 분석 및 피드백 생성 로직
-│   │   ├── posting_util.py   # 공고 CRUD 로직
-│   │   ├── login_logic.py    # 사용자 조회 및 인증 로직
-│   │   ├── storage_util.py   # S3 파일 관리 및 검증
-│   │   └── security.py       # JWT, OAuth 처리 및 토큰 관리
+│   ├── service/              # 비즈니스 로직
+│   │   ├── resume_service.py
+│   │   ├── resume_feedback_service.py  # AI 분석 및 피드백 생성
+│   │   ├── posting_service.py
+│   │   ├── login_service.py
+│   │   └── guest_service.py  # 게스트 계정, 샘플 데이터, 만료 계정 정리
 │   │
-│   ├── models.py             # SQLAlchemy ORM 정의 (17개 테이블)
-│   ├── schemas.py            # Pydantic 검증 스키마 (요청/응답)
+│   ├── models/models.py      # SQLAlchemy ORM 정의
+│   ├── schema/schemas.py     # Pydantic 검증 스키마 (요청/응답)
+│   ├── storage_util/         # S3 파일 관리 및 검증
+│   ├── security.py           # JWT 생성/검증
+│   ├── ai.py                 # LLM 클라이언트 설정
 │   ├── database.py           # 비동기/동기 DB 엔진 관리
 │   └── config/
 │       ├── settings.py       # 환경별 설정 로더
-│       ├── base.py           # 공통 설정 (JWT, AWS, OAuth)
-│       ├── development.py    # 개발 환경 설정 (디버그 모드)
-│       └── production.py     # 운영 환경 설정 (성능 최적화)
+│       ├── base.py           # 공통 설정
+│       ├── development.py    # 개발 환경 설정
+│       └── production.py     # 운영 환경 설정
 │
 ├── alembic/                  # 데이터베이스 마이그레이션
-│   ├── env.py                # Alembic 환경 설정
-│   ├── versions/             # 마이그레이션 파일 (버전 관리)
-│   └── script.py.mako        # 마이그레이션 템플릿
-│
+├── nginx_config/             # Nginx 설정
+├── certbot/                  # HTTPS 인증서
 ├── main.py                   # FastAPI 앱 진입점
 ├── requirements.txt          # Python 의존성 목록
 ├── docker-compose.dev.yml    # 로컬 개발 환경 설정
 ├── docker-compose.yml        # 운영 환경 설정
-├── Dockerfile               # 컨테이너 이미지 정의
-├── erd.mmd                  # ERD (Mermaid 형식)
-├── .env.example             # 환경변수 템플릿
-└── README.md                # 이 문서
+├── Dockerfile                # 컨테이너 이미지 정의
+├── erd.mmd                   # ERD (Mermaid 형식)
+├── .env.example              # 환경변수 템플릿
+└── README.md                 # 이 문서
 ```
 
----
 
 ## 6. 데이터베이스 설계
 
@@ -218,6 +239,7 @@ class Code(Base):
 ```
 
 **활용 예시:**
+
 ```python
 # 피드백 분류 코드 조회
 codes = await db.execute(
@@ -232,6 +254,7 @@ code_map = {code.detail_id: code.code_detail for code in codes.scalars().all()}
 ```
 
 **특징:**
+
 - 열거형 데이터를 테이블로 관리하여 확장성 확보
 - 프론트엔드와 백엔드 간 공통 코드 참조
 - 런타임에 코드 값을 변경 가능 (DB 수정만으로 UI 변경)
@@ -243,6 +266,7 @@ code_map = {code.detail_id: code.code_detail for code in codes.scalars().all()}
 ### 7.1 AI 기반 이력서 피드백 시스템
 
 **데이터 흐름:**
+
 ```
 1. 사용자가 이력서 작성 및 제출
    ↓
@@ -269,6 +293,7 @@ code_map = {code.detail_id: code.code_detail for code in codes.scalars().all()}
 ```
 
 **성능 최적화:**
+
 - `contains_eager` + `outerjoin` 사용으로 N+1 쿼리 제거 (1 + 60 → 1 쿼리)
 - Code 테이블 매핑으로 중복 조회 방지
 - Redis 캐싱으로 Code 데이터 빠른 조회
@@ -284,15 +309,17 @@ code_map = {code.detail_id: code.code_detail for code in codes.scalars().all()}
 
 **주요 API:**
 
-| Method | Path | 기능 | 설명 |
-| --- | --- | --- | --- |
-| `POST` | `/job-postings/` | 공고 생성 | 채용담당자가 채용 공고 등록 |
-| `GET` | `/job-postings/` | 목록 조회 | 페이징 및 검색 지원 (제목, 회사명) |
-| `GET` | `/job-postings/{posting_id}` | 상세 조회 | 공고 상세 정보 및 요구사항 확인 |
-| `PUT` | `/job-postings/{posting_id}` | 수정 | 공고 정보 수정 |
-| `PATCH` | `/job-postings/{posting_id}` | 삭제 (소프트) | 공고 숨김 처리 (is_active=False) |
+
+| Method  | Path                         | 기능          | 설명                               |
+| ------- | ---------------------------- | ------------- | ---------------------------------- |
+| `POST`  | `/job-postings/`             | 공고 생성     | 채용담당자가 채용 공고 등록        |
+| `GET`   | `/job-postings/`             | 목록 조회     | 페이징 및 검색 지원 (제목, 회사명) |
+| `GET`   | `/job-postings/{posting_id}` | 상세 조회     | 공고 상세 정보 및 요구사항 확인    |
+| `PUT`   | `/job-postings/{posting_id}` | 수정          | 공고 정보 수정                     |
+| `PATCH` | `/job-postings/{posting_id}` | 삭제 (소프트) | 공고 숨김 처리 (is_active=False)   |
 
 **특징:**
+
 - 소프트 삭제: 데이터 완전 삭제 없이 is_active 플래그로 상태 관리
 - 페이징: page=1, page_size=6 형식으로 효율적인 데이터 로드
 - 전문 검색: 제목, 회사명, 기술 스택으로 다양한 검색 지원
@@ -303,23 +330,26 @@ code_map = {code.detail_id: code.code_detail for code in codes.scalars().all()}
 
 ### 인증 API
 
-| Method | Path | 설명 | 요청 예시 |
-| --- | --- | --- | --- |
-| `POST` | `/auth/google/callback` | Google OAuth 콜백 | `{"code": "auth_code_from_google"}` |
-| `POST` | `/auth/refresh` | JWT 토큰 갱신 | `{"refresh_token": "..."}` |
-| `POST` | `/auth/logout` | 로그아웃 (토큰 블랙리스트) | Header: `Authorization: Bearer token` |
+
+| Method | Path                    | 설명                       | 요청 예시                            |
+| ------ | ----------------------- | -------------------------- | ------------------------------------ |
+| `POST` | `/auth/google/callback` | Google OAuth 콜백          | `{"code": "auth_code_from_google"}`  |
+| `POST` | `/auth/refresh`         | JWT 토큰 갱신              | `{"refresh_token": "..."}`           |
+| `POST` | `/auth/logout`          | 로그아웃 (토큰 블랙리스트) | Header:`Authorization: Bearer token` |
 
 ### 이력서 API
 
-| Method | Path | 설명 | 상태 |
-| --- | --- | --- | --- |
-| `POST` | `/resumes/` | 이력서 생성 | 구현됨 |
-| `GET` | `/resumes/` | 이력서 목록 (페이징) | 구현됨 |
-| `GET` | `/resumes/{resume_id}` | 이력서 상세 | 구현됨 |
-| `PUT` | `/resumes/{resume_id}` | 이력서 수정 | 구현됨 |
+
+| Method   | Path                   | 설명                 | 상태   |
+| -------- | ---------------------- | -------------------- | ------ |
+| `POST`   | `/resumes/`            | 이력서 생성          | 구현됨 |
+| `GET`    | `/resumes/`            | 이력서 목록 (페이징) | 구현됨 |
+| `GET`    | `/resumes/{resume_id}` | 이력서 상세          | 구현됨 |
+| `PUT`    | `/resumes/{resume_id}` | 이력서 수정          | 구현됨 |
 | `DELETE` | `/resumes/{resume_id}` | 이력서 삭제 (소프트) | 구현됨 |
 
 **이력서 생성 요청 예시:**
+
 ```json
 {
   "title": "2024 상반기 취업용 이력서",
@@ -352,12 +382,13 @@ code_map = {code.detail_id: code.code_detail for code in codes.scalars().all()}
 
 ### 피드백 API
 
-| Method | Path | 설명 | 기능 |
-| --- | --- | --- | --- |
-| `POST` | `/resume_feedbacks/standard/{resume_id}` | 일반 피드백 생성 | 이력서 일반 분석 (공고 무관) |
-| `POST` | `/resume_feedbacks/posting/{resume_id}/{posting_id}` | 공고별 피드백 생성 | 특정 공고에 맞춘 맞춤형 분석 |
-| `GET` | `/resume_feedbacks/{feedback_id}` | 피드백 조회 | 이전에 생성한 피드백 조회 |
-| `POST` | `/resume_feedbacks/standard_resume/{feedback_id}` | 개선 이력서 생성 | 피드백을 반영한 개선된 이력서 자동 생성 |
+
+| Method | Path                                                 | 설명               | 기능                                    |
+| ------ | ---------------------------------------------------- | ------------------ | --------------------------------------- |
+| `POST` | `/resume_feedbacks/standard/{resume_id}`             | 일반 피드백 생성   | 이력서 일반 분석 (공고 무관)            |
+| `POST` | `/resume_feedbacks/posting/{resume_id}/{posting_id}` | 공고별 피드백 생성 | 특정 공고에 맞춘 맞춤형 분석            |
+| `GET`  | `/resume_feedbacks/{feedback_id}`                    | 피드백 조회        | 이전에 생성한 피드백 조회               |
+| `POST` | `/resume_feedbacks/standard_resume/{feedback_id}`    | 개선 이력서 생성   | 피드백을 반영한 개선된 이력서 자동 생성 |
 
 ---
 
@@ -437,6 +468,7 @@ async def resume_feedback(
 ```
 
 **보안 기능:**
+
 - HTTPS only: 토큰은 HTTPS로만 전송
 - HttpOnly 쿠키: 자동 XSS 방지
 - CORS 설정: 허용된 도메인에서만 접근
@@ -506,6 +538,7 @@ alembic current
 ```
 
 **마이그레이션 팁:**
+
 - 스키마 변경 전에 항상 마이그레이션 생성
 - `alembic upgrade head` 후 테스트 데이터로 검증
 - 롤백 테스트: `downgrade -1` → `upgrade head` 반복 확인
@@ -543,33 +576,35 @@ docker-compose down -v
 ### AWS Lightsail 배포 절차
 
 1. **사전 준비**
+
    ```bash
    git clone https://github.com/moduFinalProject/Backend.git
    cd Backend
    ```
-
 2. **환경 설정**
+
    ```bash
    # .env 파일 생성 (프로덕션 환경변수 설정)
    cp .env.example .env
    nano .env  # 프로덕션 값 입력
    ```
-
 3. **Docker로 배포**
+
    ```bash
    docker-compose up -d
    ```
-
 4. **Nginx 설정**
+
    - SSL/TLS 인증서 설정 (Let's Encrypt)
    - 리버스 프록시 설정
    - HSTS 헤더 추가
-
 5. **자동 갱신**
+
    - Certbot으로 인증서 자동 갱신 (12시간마다)
    - Nginx 자동 리로드 (6시간마다)
 
 **배포 모니터링:**
+
 ```bash
 # 운영 서버 로그 확인
 docker-compose logs -f backend
@@ -583,6 +618,8 @@ docker-compose exec db psql -U postgres -d gaechwi -c "SELECT version();"
 
 ---
 
+
+
 ## 12. 트러블슈팅 및 해결 사항
 
 ### 12.1 N+1 쿼리 문제 - contains_eager 성능 개선
@@ -590,6 +627,120 @@ docker-compose exec db psql -U postgres -d gaechwi -c "SELECT version();"
 **문제:** 이력서 상세 조회 시 관련 테이블 6개(경험, 교육, 프로젝트, 활동, 기술스택, 자격증) 조회로 1 + N × 6 형태의 쿼리 발생.
 
 **증상:**
+
+- 이력서 1개 조회: 7개 쿼리 (1 + 6)
+- 이력서 10개 조회: 61개 쿼리 (1 + 60)
+
+**원인:** ORM의 기본 동작인 Lazy Loading으로 인해 관계 데이터가 필요한 시점에 별도 쿼리 실행.
+
+```python
+# ❌ 나쁜 예: N+1 쿼리 발생
+resume = await db.get(Resume, resume_id)
+for experience in resume.experiences:  # 추가 쿼리 발생!
+    print(experience.company_name)
+```
+
+**해결책:** `contains_eager` + `outerjoin`으로 한 번에 로드
+
+```python
+stmt = (
+    select(Resume)
+    .outerjoin(Resume.experiences)
+    .outerjoin(Resume.educations)
+    .outerjoin(Resume.projects)
+    .outerjoin(Resume.activities)
+    .outerjoin(Resume.technology_stacks)
+    .outerjoin(Resume.qualifications)
+    .options(
+        contains_eager(Resume.experiences),
+        contains_eager(Resume.educations),
+        contains_eager(Resume.projects),
+        contains_eager(Resume.activities),
+        contains_eager(Resume.technology_stacks),
+        contains_eager(Resume.qualifications),
+    )
+    .where(Resume.resume_id == resume_id)
+)
+result = await db.execute(stmt)
+row = result.unique().first()  # 중복 행 제거 필수!
+resume = row[0]
+```
+
+**핵심 포인트:**
+
+- `outerjoin` + `contains_eager` 함께 사용 필수 (selectinload는 별도 쿼리 사용)
+- `result.unique()`로 JOIN 결과의 중복 행 제거 (여러 컬렉션을 JOIN하면 행이 곱으로 늘어나 같은 엔티티가 중복됨)
+- 여러 관계를 한 번에 로드하면 네트워크 왕복 횟수 감소
+- **개선 결과: 관계 데이터를 JOIN으로 한 번에 불러와 N+1 쿼리 문제를 해결** (학위 코드 매핑은 별도 조회)
+- **한계: 컬렉션 6개를 한 번에 JOIN하면 결과 행 수가 곱으로 늘어납니다. 데이터가 커지면 `selectinload` 방식과 비교가 필요합니다.**
+
+---
+
+### 12.2 AI 응답 데이터 구조 불일치 - LangChain 파싱 실패
+
+**문제:** OpenAI API 응답이 Pydantic 스키마와 맞지 않아 필드 누락이나 타입 오류 발생.
+
+**증상:**
+
+```
+ValidationError: 1 validation error for ResumeFeedbackAI
+feedback_contents
+  Field required (type=value_error.missing)
+```
+
+**원인:** 프롬프트에 JSON 구조가 명확하게 명시되지 않아 LLM이 형식을 자유롭게 해석.
+
+```python
+# ❌ 문제 있는 코드
+chain = prompt | llm  # 구조 강제 없음
+result = await chain.ainvoke({"resume": data})
+# LLM이 자유로운 형식으로 응답 → 파싱 실패
+```
+
+**해결책:** LangChain의 `with_structured_output()`으로 JSON 구조 강제
+
+```python
+class ResumeFeedbackAI(BaseModel):
+    """이력서 피드백 데이터 모델"""
+    matching_rate: int = Field(
+        ge=0, le=100,
+        description="매칭률 (0~100 사이의 정수)"
+    )
+    feedback_contents: List[dict] = Field(
+        min_items=1,
+        description="피드백 내용 리스트 (최소 1개 이상)"
+    )
+
+# ✅ 올바른 코드
+chain = prompt | llm.with_structured_output(ResumeFeedbackAI)
+result = await chain.ainvoke({"resume": data})
+# LLM이 반드시 ResumeFeedbackAI 스키마 형식으로 응답
+```
+
+**동작 원리:**
+
+1. Pydantic 스키마의 필드 정의 추출
+2. JSON Schema로 변환
+3. 프롬프트에 자동으로 JSON 형식 지시 추가
+4. LLM이 반드시 해당 형식으로 응답하도록 강제
+5. 응답 자동 검증 및 파싱
+
+**핵심 포인트:**
+
+- `with_structured_output()`은 LLM API의 기본 기능 활용 (OpenAI, Claude 등)
+- Field의 description이 LLM이 실제로 따르는 지시사항
+- `ge=0, le=100` 같은 제약 조건이 프롬프트에 자동 반영
+- ValidationError 제거로 안정적인 파이프라인 구성
+- **개선 결과: 응답 형식 오류로 인한 ValidationError 해소**
+
+---
+
+### 12.1 N+1 쿼리 문제 - contains_eager 성능 개선
+
+**문제:** 이력서 상세 조회 시 관련 테이블 6개(경험, 교육, 프로젝트, 활동, 기술스택, 자격증) 조회로 1 + N × 6 형태의 쿼리 발생.
+
+**증상:**
+
 - 이력서 1개 조회: 7개 쿼리 (1 + 6)
 - 이력서 10개 조회: 61개 쿼리 (1 + 60)
 - 응답 시간: 초 단위로 지연
@@ -630,6 +781,7 @@ resume = row[0]
 ```
 
 **핵심 포인트:**
+
 - `outerjoin` + `contains_eager` 함께 사용 필수 (selectinload는 별도 쿼리 사용)
 - `result.unique()`로 JOIN 결과의 중복 행 제거 (다대다 관계에서 중복 발생)
 - 여러 관계를 한 번에 로드하면 네트워크 왕복 횟수 급감
@@ -648,6 +800,7 @@ resume = row[0]
 **문제:** OpenAI API 응답이 Pydantic 스키마와 맞지 않아 필드 누락이나 타입 오류 발생.
 
 **증상:**
+
 ```
 ValidationError: 1 validation error for ResumeFeedbackAI
 feedback_contents
@@ -684,6 +837,7 @@ result = await chain.ainvoke({"resume": data})
 ```
 
 **동작 원리:**
+
 1. Pydantic 스키마의 필드 정의 추출
 2. JSON Schema로 변환
 3. 프롬프트에 자동으로 JSON 형식 지시 추가
@@ -691,6 +845,7 @@ result = await chain.ainvoke({"resume": data})
 5. 응답 자동 검증 및 파싱
 
 **핵심 포인트:**
+
 - `with_structured_output()`은 LLM API의 기본 기능 활용 (OpenAI, Claude 등)
 - Field의 description이 LLM이 실제로 따르는 지시사항
 - `ge=0, le=100` 같은 제약 조건이 프롬프트에 자동 반영
@@ -702,18 +857,21 @@ result = await chain.ainvoke({"resume": data})
 ## 추가 자료
 
 ### 아키텍처 다이아그램
+
 ```
 <img width="999" height="518" alt="스크린샷 2025-11-18 오후 3 35 44" src="https://github.com/user-attachments/assets/11df953d-f525-44d9-a480-6e322df2da30" />
  architecture_detailed
 ```
 
 ### 데이터베이스 ERD
+
 ```
 <img width="7954" height="6888" alt="Untitled diagram-2025-11-18-155954" src="https://github.com/user-attachments/assets/d391e37a-db3d-43fa-bae5-e5ee83e99745" />
 database_erd
 ```
 
 ### 실제 구현 기능 화면
+
 ```
 [캡쳐 영역] feature_screenshots
 - 이력서 작성 화면
@@ -723,4 +881,3 @@ database_erd
 ```
 
 ---
-
