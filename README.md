@@ -60,7 +60,7 @@ GAECHWI는 AI 기반 이력서 첨삭과 채용 공고별 맞춤 피드백을 �
 
 ### 전체 시스템 흐름도
 
-[아키텍처 구조도](https://claude.ai/chat/image/%EC%95%84%ED%82%A4%ED%85%8D%EC%B3%90%20%EA%B5%AC%EC%A1%B0%EB%8F%84.png)
+![아키텍처 구조도](./image/아키텍쳐%20구조도.png)
 
 ### 레이어별 구성
 
@@ -211,7 +211,7 @@ Users (사용자 정보)
 
 ### ERD (Entity-Relationship Diagram)
 
-[Database ERD](https://claude.ai/chat/image/erd.png)
+![Database ERD](./image/erd.png)
 
 ### Code 테이블 (코드 매핑 패턴)
 
@@ -719,7 +719,7 @@ result = await chain.ainvoke({"resume": data})
 
 ### 아키텍처 구조도
 
-![아키텍처 구조도](./image/아키텍쳐%20구조도.png)[
+![아키텍처 구조도](./image/아키텍쳐%20구조도.png)
 
 ### 데이터베이스 ERD
 
